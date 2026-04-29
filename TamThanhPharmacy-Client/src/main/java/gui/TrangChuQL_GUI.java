@@ -102,7 +102,7 @@ public class TrangChuQL_GUI extends JFrame {
 		hienThiTrangChu();
 //		 taoMappingPanel();
 		hienThiThongTinNhanVien();
-//		ganSuKien();
+		ganSuKien();
 
 		setVisible(true);
 	}
@@ -120,20 +120,20 @@ public class TrangChuQL_GUI extends JFrame {
 	public Image taiAnh(String duongDanTuDB) {
 		try {
 			if (duongDanTuDB == null || duongDanTuDB.trim().isEmpty()) {
-				return new ImageIcon(System.getProperty("user.dir") + "/resource/picture/default.png").getImage();
+				return new ImageIcon(System.getProperty("user.dir") + "/src/main/resources/picture/default.png").getImage();
 			}
 
-			File file = new File(System.getProperty("user.dir") + "/resource" + duongDanTuDB);
+			File file = new File(System.getProperty("user.dir") + "/src/main/resources/" + duongDanTuDB);
 
 			if (file.exists()) {
 				return new ImageIcon(file.getAbsolutePath()).getImage();
 			} else {
-				return new ImageIcon(System.getProperty("user.dir") + "/resource/picture/default.png").getImage();
+				return new ImageIcon(System.getProperty("user.dir") + "/src/main/resources/picture/default.png").getImage();
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ImageIcon(System.getProperty("user.dir") + "/resource/picture/default.png").getImage();
+			return new ImageIcon(System.getProperty("user.dir") + "/src/main/resources/picture/default.png").getImage();
 		}
 	}
 
@@ -150,12 +150,12 @@ public class TrangChuQL_GUI extends JFrame {
 	}
 
 	private void ganSuKien() {
-//		imgTaiKhoan.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				xemThongTinNhanVienDangNhap();
-//			}
-//		});
+		imgTaiKhoan.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				xemThongTinNhanVienDangNhap();
+			}
+		});
 
 		imgDangXuat.addMouseListener(new MouseAdapter() {
 			@Override
@@ -172,18 +172,18 @@ public class TrangChuQL_GUI extends JFrame {
 		});
 	}
 
-//	public void xemThongTinNhanVienDangNhap() {
-//		if (nhanVien == null) {
-//			JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin nhân viên!", "Lỗi",
-//					JOptionPane.ERROR_MESSAGE);
-//			return;
-//		}
-//
-//		ChiTietNhanVien_GUI chiTietPanel = new ChiTietNhanVien_GUI(this);
-//		setUpNoiDung(chiTietPanel);
-//
-//		chiTietPanel.getCtrl().setNhanVienHienTai(nhanVien);
-//	}
+	public void xemThongTinNhanVienDangNhap() {
+		if (nhanVien == null) {
+			JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin nhân viên!", "Lỗi",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		ChiTietNhanVien_GUI chiTietPanel = new ChiTietNhanVien_GUI(this);
+		setUpNoiDung(chiTietPanel);
+
+		chiTietPanel.getCtrl().setNhanVienHienTai(nhanVien);
+	}
 
 	/** Ánh xạ tên menu hoặc menu con sang panel tương ứng */
 //	public void taoMappingPanel() {
@@ -263,23 +263,23 @@ public class TrangChuQL_GUI extends JFrame {
 //		// Lưu ý: Các GUI này cần truyền 'this' (TrangChuQL_GUI) vào constructor
 //		case "Tìm kiếm hóa đơn":
 //			return new TimKiemHD_GUI(this);
-//		case "Danh sách phiếu đặt thuốc":
-//			return new TimKiemPhieuDatHang_GUI(this);
+		case "Danh sách phiếu đặt thuốc":
+			return new TimKiemPhieuDatHang_GUI(this);
 //		case "Lập hóa đơn":
 //			return new LapHoaDon_GUI(this);
-//		case "Đặt thuốc":
-//			return new LapPhieuDatHang_GUI(this);
-//		case "Danh sách phiếu đổi trả":
-//			return new TimKiemPhieuDoiTra_GUI(this);
-//		case "Thống kê hóa đơn":
-//			return new ThongKeHoaDon_GUI();
-//
+		case "Đặt thuốc":
+			return new LapPhieuDatHang_GUI(this);
+		case "Danh sách phiếu đổi trả":
+			return new TimKiemPhieuDoiTra_GUI(this);
+		case "Thống kê hóa đơn":
+			return new ThongKeHoaDon_GUI();
+
 //		// === MENU CON CỦA NHÂN VIÊN ===
-//		case "Tìm kiếm nhân viên":
-//			return new TimKiemNV_GUI(this);
-//		case "Thêm nhân viên":
-//			return new ThemNhanVien_GUI();
-//
+		case "Tìm kiếm nhân viên":
+			return new TimKiemNV_GUI(this);
+		case "Thêm nhân viên":
+			return new ThemNhanVien_GUI();
+
 //		// === MENU CON CỦA KHUYẾN MÃI ===
 		case "Danh sách khuyến mãi":
 			return new DanhSachKhuyenMai_GUI();
