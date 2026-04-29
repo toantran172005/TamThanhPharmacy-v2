@@ -281,10 +281,10 @@ public class TrangChuQL_GUI extends JFrame {
 //			return new ThemNhanVien_GUI();
 //
 //		// === MENU CON CỦA KHUYẾN MÃI ===
-//		case "Danh sách khuyến mãi":
-//			return new DanhSachKhuyenMai_GUI();
-//		case "Thêm Khuyến Mãi":
-//			return new ThemKhuyenMai_GUI();
+		case "Danh sách khuyến mãi":
+			return new DanhSachKhuyenMai_GUI();
+		case "Thêm Khuyến Mãi":
+			return new ThemKhuyenMai_GUI();
 
 		// === MENU CHA (Dùng panel tạm) ===
 		case "Thuốc":
