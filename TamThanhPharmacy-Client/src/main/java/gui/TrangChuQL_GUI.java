@@ -248,17 +248,17 @@ public class TrangChuQL_GUI extends JFrame {
 			return new DanhSachKeThuoc_GUI();
 		case "Thêm kệ thuốc":
 			return new ThemKeThuoc_GUI();
-//
-//		// === MENU CON CỦA KHÁCH HÀNG ===
-//		case "Tìm kiếm khách hàng":
-//			return new TimKiemKH_GUI();
-//		case "Thêm khách hàng":
-//			return new ThemKhachHang_GUI();
-//		case "Khiếu nại & Hỗ trợ":
-//			return new DanhSachKhieuNaiVaHoTroHK_GUI();
-//		case "Thống kê khách hàng":
-//			return new ThongKeKhachHang_GUI();
-//
+
+		// === MENU CON CỦA KHÁCH HÀNG ===
+		case "Tìm kiếm khách hàng":
+			return new TimKiemKH_GUI();
+		case "Thêm khách hàng":
+			return new ThemKhachHang_GUI();
+		case "Khiếu nại & Hỗ trợ":
+			return new DanhSachKhieuNaiVaHoTroHK_GUI();
+		case "Thống kê khách hàng":
+			return new ThongKeKhachHang_GUI();
+
 //		// === MENU CON CỦA HÓA ĐƠN ===
 //		// Lưu ý: Các GUI này cần truyền 'this' (TrangChuQL_GUI) vào constructor
 //		case "Tìm kiếm hóa đơn":

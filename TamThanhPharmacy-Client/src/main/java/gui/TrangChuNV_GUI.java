@@ -228,14 +228,14 @@ public class TrangChuNV_GUI extends JFrame {
 		case "Thêm kệ thuốc":
 			return new ThemKeThuoc_GUI();
 
-//		// === MENU CON CỦA KHÁCH HÀNG ===
-//		case "Tìm kiếm khách hàng":
-//			return new TimKiemKH_GUI();
-//		case "Thêm khách hàng":
-//			return new ThemKhachHang_GUI();
-//		case "Khiếu nại & Hỗ trợ":
-//			return new DanhSachKhieuNaiVaHoTroHK_GUI();
-//
+		// === MENU CON CỦA KHÁCH HÀNG ===
+		case "Tìm kiếm khách hàng":
+			return new TimKiemKH_GUI();
+		case "Thêm khách hàng":
+			return new ThemKhachHang_GUI();
+		case "Khiếu nại & Hỗ trợ":
+			return new DanhSachKhieuNaiVaHoTroHK_GUI();
+
 //		// === MENU CON CỦA HÓA ĐƠN ===
 //		// Lưu ý: Các GUI này cần truyền 'this' (TrangChuNV_GUI) vào constructor
 //		case "Tìm kiếm hóa đơn":
