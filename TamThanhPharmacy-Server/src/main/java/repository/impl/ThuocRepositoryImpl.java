@@ -271,6 +271,8 @@ public class ThuocRepositoryImpl extends GenericJpa implements ThuocRepository {
             String jpql = "SELECT t FROM Thuoc t " +
                     "LEFT JOIN FETCH t.keThuoc " +
                     "LEFT JOIN FETCH t.donViTinh " +
+                    "LEFT JOIN FETCH t.thue " +
+                    "LEFT JOIN FETCH t.quocGia " +
                     "WHERE t.maThuoc = :maThuoc";
 
             return em.createQuery(jpql, Thuoc.class)
@@ -319,7 +321,42 @@ public class ThuocRepositoryImpl extends GenericJpa implements ThuocRepository {
     @Override
     public boolean capNhatThuoc(Thuoc thuoc) {
         try {
-            inTransaction(em -> em.merge(thuoc));
+            inTransaction(em -> {
+
+                Thuoc existing = em.find(Thuoc.class, thuoc.getMaThuoc());
+
+                if (existing == null) {
+                    throw new RuntimeException("Không tìm thấy thuốc");
+                }
+
+                existing.setTenThuoc(thuoc.getTenThuoc());
+                existing.setGiaBan(thuoc.getGiaBan());
+                existing.setSoLuong(thuoc.getSoLuong());
+                existing.setDangThuoc(thuoc.getDangThuoc());
+                existing.setHanSuDung(thuoc.getHanSuDung());
+
+                if (thuoc.getNhaCungCap() != null) {
+                    NhaCungCap ncc = em.find(
+                            NhaCungCap.class,
+                            thuoc.getNhaCungCap().getMaNCC()
+                    );
+                    existing.setNhaCungCap(ncc);
+                }
+
+                if (thuoc.getQuocGia() != null) {
+                    existing.setQuocGia(
+                            em.find(QuocGia.class, thuoc.getQuocGia().getMaQuocGia())
+                    );
+                }
+
+                if (thuoc.getThue() != null) {
+                    existing.setThue(
+                            em.find(Thue.class, thuoc.getThue().getMaThue())
+                    );
+                }
+
+            });
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -378,6 +415,7 @@ public class ThuocRepositoryImpl extends GenericJpa implements ThuocRepository {
                     "LEFT JOIN FETCH t.keThuoc " +
                     "LEFT JOIN FETCH t.donViTinh " +
                     "LEFT JOIN FETCH t.quocGia " +
+                    "LEFT JOIN FETCH t.thue " +
                     "WHERE t.trangThai = :trangThai " +
                     "ORDER BY t.maThuoc";
             return em.createQuery(jpql, Thuoc.class)

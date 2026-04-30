@@ -9,9 +9,6 @@ import javax.swing.table.TableColumnModel;
 import com.toedter.calendar.JDateChooser;
 import controller.KhuyenMaiController;
 import utils.ToolCtrl;
-//
-//import controller.KhuyenMaiCtrl;
-//import controller.ToolCtrl;
 
 import java.awt.*;
 import java.awt.event.KeyAdapter;

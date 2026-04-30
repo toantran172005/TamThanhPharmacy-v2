@@ -26,6 +26,7 @@ import gui.ChiTietKhuyenMai_GUI;
 import gui.DanhSachKhuyenMai_GUI;
 import gui.ThemKhuyenMai_GUI;
 //import service.ThuocService;
+import service.ThuocService;
 import utils.ToolCtrl;
 
 public class KhuyenMaiController {
@@ -37,7 +38,7 @@ public class KhuyenMaiController {
     public ThemKhuyenMai_GUI themKmGUI;
 
     public KhuyenMaiService kmService = new KhuyenMaiService();
-//    public ThuocService thuocService = new ThuocService();
+    public ThuocService thuocService = new ThuocService();
     public ToolCtrl tool = new ToolCtrl();
 
     ArrayList<KhuyenMai> listKM = new ArrayList<KhuyenMai>();
@@ -302,32 +303,32 @@ public class KhuyenMaiController {
         }
     }
 
-//    public void setDuLieuChoCmbThuoc(JComboBox<String> cmb) {
-//        new SwingWorker<List<Thuoc>, Void>() {
-//            @Override
-//            protected List<Thuoc> doInBackground() throws Exception {
-//                if (listThuocTam == null || listThuocTam.isEmpty()) {
-//                    return thuocService.layListThuoc(true); // Lấy qua mạng
-//                }
-//                return listThuocTam;
-//            }
-//
-//            @Override
-//            protected void done() {
-//                try {
-//                    listThuocTam = new ArrayList<>(get());
-//                    cmb.removeAllItems();
-//                    cmb.addItem("");
-//                    for(Thuoc t : listThuocTam) {
-//                        cmb.addItem(t.getTenThuoc());
-//                    }
-//                    caiDatGoiYThuoc(cmb);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }.execute();
-//    }
+    public void setDuLieuChoCmbThuoc(JComboBox<String> cmb) {
+        new SwingWorker<List<Thuoc>, Void>() {
+            @Override
+            protected List<Thuoc> doInBackground() throws Exception {
+                if (listThuocTam == null || listThuocTam.isEmpty()) {
+                    return thuocService.layListThuoc(true); // Lấy qua mạng
+                }
+                return listThuocTam;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    listThuocTam = new ArrayList<>(get());
+                    cmb.removeAllItems();
+                    cmb.addItem("");
+                    for(Thuoc t : listThuocTam) {
+                        cmb.addItem(t.getTenThuoc());
+                    }
+                    caiDatGoiYThuoc(cmb);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute();
+    }
 
     public void luuCapNhat() {
         if (KhuyenMaiController.maKMHienTai == null) {
@@ -418,105 +419,105 @@ public class KhuyenMaiController {
         }
     }
 
-//    public void themThuocVaoBang() {
-//        Object selectedItem = ctGUI.cmbThemThuoc.getSelectedItem();
-//        if (selectedItem == null) return;
-//        String tenThuoc = selectedItem.toString();
-//        DefaultTableModel model = (DefaultTableModel) ctGUI.tblChiTietKM.getModel();
-//
-//        for (int i = 0; i < model.getRowCount(); i++) {
-//            if (tenThuoc.equals(model.getValueAt(i, 1).toString())) {
-//                tool.hienThiThongBao("Trùng lặp", "Thuốc " + tenThuoc + " đã có trong danh sách áp dụng!", false);
-//                return;
-//            }
-//        }
-//
-//        String loaiKM = ctGUI.cmbLoaiKM.getSelectedItem().toString();
-//        String hienThiMucKM = "";
-//
-//        try {
-//            if (loaiKM.equalsIgnoreCase("Giảm giá")) {
-//                String val = ctGUI.txtMucKM.getText().trim();
-//                if (val.isEmpty() || Double.parseDouble(val) <= 0 || Double.parseDouble(val) > 100) {
-//                    tool.hienThiThongBao("Lỗi nhập liệu", "Vui lòng nhập mức giảm giá hợp lệ (1-100%)!", false);
-//                    ctGUI.txtMucKM.requestFocus();
-//                    return;
-//                }
-//                hienThiMucKM = val + "%";
-//            } else {
-//                int mua = Integer.parseInt(ctGUI.txtSoLuongMua.getText().trim());
-//                int tang = Integer.parseInt(ctGUI.txtSoLuongTang.getText().trim());
-//                if (mua <= 0 || tang <= 0) {
-//                    tool.hienThiThongBao("Lỗi nhập liệu", "Số lượng mua và tặng phải lớn hơn 0!", false);
-//                    return;
-//                }
-//                hienThiMucKM = "Mua " + mua + " tặng " + tang;
-//            }
-//        } catch (NumberFormatException e) {
-//            tool.hienThiThongBao("Lỗi định dạng", "Vui lòng nhập đúng định dạng số!", false);
-//            return;
-//        }
-//
-//        final String finalHienThiMuc = hienThiMucKM;
-//
-//        // Gọi DB tìm mã thuốc nên bọc Thread
-//        new Thread(() -> {
-//            String maThuoc = thuocService.layMaThuocTheoTen(tenThuoc);
-//            SwingUtilities.invokeLater(() -> {
-//                if (maThuoc == null) {
-//                    tool.hienThiThongBao("Lỗi dữ liệu", "Không tìm thấy mã thuốc tương ứng trong CSDL!", false);
-//                    return;
-//                }
-//                model.addRow(new Object[] { maThuoc, tenThuoc, loaiKM, finalHienThiMuc, "Đang áp dụng" });
-//                ctGUI.cmbThemThuoc.setSelectedItem("");
-//            });
-//        }).start();
-//    }
+    public void themThuocVaoBang() {
+        Object selectedItem = ctGUI.cmbThemThuoc.getSelectedItem();
+        if (selectedItem == null) return;
+        String tenThuoc = selectedItem.toString();
+        DefaultTableModel model = (DefaultTableModel) ctGUI.tblChiTietKM.getModel();
 
-//    public void themThuocVaoBangThemKM() {
-//        Object selectedItem = themKmGUI.cmbThemThuoc.getSelectedItem();
-//        if (selectedItem == null || selectedItem.toString().trim().isEmpty()) {
-//            tool.hienThiThongBao("Cảnh báo", "Vui lòng chọn thuốc cần thêm!", false);
-//            return;
-//        }
-//        String tenThuoc = selectedItem.toString();
-//        DefaultTableModel model = (DefaultTableModel) themKmGUI.tblThuocKhuyenMai.getModel();
-//
-//        for (int i = 0; i < model.getRowCount(); i++) {
-//            Object val = model.getValueAt(i, 1);
-//            if (val != null && tenThuoc.equals(val.toString())) {
-//                tool.hienThiThongBao("Trùng lặp", "Thuốc này đã được thêm vào danh sách!", false);
-//                return;
-//            }
-//        }
-//
-//        // Bọc vào SwingWorker vì có 2 lời gọi mạng
-//        new SwingWorker<Thuoc, Void>() {
-//            @Override
-//            protected Thuoc doInBackground() throws Exception {
-//                String maThuoc = thuocService.layMaThuocTheoTen(tenThuoc);
-//                return thuocService.timThuocTheoMa(maThuoc);
-//            }
-//
-//            @Override
-//            protected void done() {
-//                try {
-//                    Thuoc t = get();
-//                    if (t == null) {
-//                        tool.hienThiThongBao("Lỗi", "Không tìm thấy thông tin thuốc!", false);
-//                        return;
-//                    }
-//                    String loaiKe = (t.getKeThuoc() != null && t.getKeThuoc().getLoaiKe() != null) ? t.getKeThuoc().getLoaiKe() : "";
-//                    String tenDVT = (t.getDonViTinh() != null && t.getDonViTinh().getTenDVT() != null) ? t.getDonViTinh().getTenDVT() : "";
-//
-//                    model.addRow(new Object[] { t.getMaThuoc(), t.getTenThuoc(), loaiKe, tenDVT, t.getGiaBan() });
-//                    themKmGUI.cmbThemThuoc.setSelectedItem("");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }.execute();
-//    }
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (tenThuoc.equals(model.getValueAt(i, 1).toString())) {
+                tool.hienThiThongBao("Trùng lặp", "Thuốc " + tenThuoc + " đã có trong danh sách áp dụng!", false);
+                return;
+            }
+        }
+
+        String loaiKM = ctGUI.cmbLoaiKM.getSelectedItem().toString();
+        String hienThiMucKM = "";
+
+        try {
+            if (loaiKM.equalsIgnoreCase("Giảm giá")) {
+                String val = ctGUI.txtMucKM.getText().trim();
+                if (val.isEmpty() || Double.parseDouble(val) <= 0 || Double.parseDouble(val) > 100) {
+                    tool.hienThiThongBao("Lỗi nhập liệu", "Vui lòng nhập mức giảm giá hợp lệ (1-100%)!", false);
+                    ctGUI.txtMucKM.requestFocus();
+                    return;
+                }
+                hienThiMucKM = val + "%";
+            } else {
+                int mua = Integer.parseInt(ctGUI.txtSoLuongMua.getText().trim());
+                int tang = Integer.parseInt(ctGUI.txtSoLuongTang.getText().trim());
+                if (mua <= 0 || tang <= 0) {
+                    tool.hienThiThongBao("Lỗi nhập liệu", "Số lượng mua và tặng phải lớn hơn 0!", false);
+                    return;
+                }
+                hienThiMucKM = "Mua " + mua + " tặng " + tang;
+            }
+        } catch (NumberFormatException e) {
+            tool.hienThiThongBao("Lỗi định dạng", "Vui lòng nhập đúng định dạng số!", false);
+            return;
+        }
+
+        final String finalHienThiMuc = hienThiMucKM;
+
+        // Gọi DB tìm mã thuốc nên bọc Thread
+        new Thread(() -> {
+            String maThuoc = thuocService.layMaThuocTheoTen(tenThuoc);
+            SwingUtilities.invokeLater(() -> {
+                if (maThuoc == null) {
+                    tool.hienThiThongBao("Lỗi dữ liệu", "Không tìm thấy mã thuốc tương ứng trong CSDL!", false);
+                    return;
+                }
+                model.addRow(new Object[] { maThuoc, tenThuoc, loaiKM, finalHienThiMuc, "Đang áp dụng" });
+                ctGUI.cmbThemThuoc.setSelectedItem("");
+            });
+        }).start();
+    }
+
+    public void themThuocVaoBangThemKM() {
+        Object selectedItem = themKmGUI.cmbThemThuoc.getSelectedItem();
+        if (selectedItem == null || selectedItem.toString().trim().isEmpty()) {
+            tool.hienThiThongBao("Cảnh báo", "Vui lòng chọn thuốc cần thêm!", false);
+            return;
+        }
+        String tenThuoc = selectedItem.toString();
+        DefaultTableModel model = (DefaultTableModel) themKmGUI.tblThuocKhuyenMai.getModel();
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Object val = model.getValueAt(i, 1);
+            if (val != null && tenThuoc.equals(val.toString())) {
+                tool.hienThiThongBao("Trùng lặp", "Thuốc này đã được thêm vào danh sách!", false);
+                return;
+            }
+        }
+
+        // Bọc vào SwingWorker vì có 2 lời gọi mạng
+        new SwingWorker<Thuoc, Void>() {
+            @Override
+            protected Thuoc doInBackground() throws Exception {
+                String maThuoc = thuocService.layMaThuocTheoTen(tenThuoc);
+                return thuocService.timThuocTheoMa(maThuoc);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    Thuoc t = get();
+                    if (t == null) {
+                        tool.hienThiThongBao("Lỗi", "Không tìm thấy thông tin thuốc!", false);
+                        return;
+                    }
+                    String loaiKe = (t.getKeThuoc() != null && t.getKeThuoc().getLoaiKe() != null) ? t.getKeThuoc().getLoaiKe() : "";
+                    String tenDVT = (t.getDonViTinh() != null && t.getDonViTinh().getTenDVT() != null) ? t.getDonViTinh().getTenDVT() : "";
+
+                    model.addRow(new Object[] { t.getMaThuoc(), t.getTenThuoc(), loaiKe, tenDVT, t.getGiaBan() });
+                    themKmGUI.cmbThemThuoc.setSelectedItem("");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute();
+    }
 
     public void themKhuyenMai() {
         try {
@@ -637,66 +638,66 @@ public class KhuyenMaiController {
         }
     }
 
-//    public void caiDatGoiYThuoc(JComboBox<String> cmb) {
-//        cmb.setEditable(true);
-//        final JTextField textfield = (JTextField) cmb.getEditor().getEditorComponent();
-//
-//        textfield.addKeyListener(new KeyAdapter() {
-//            @Override
-//            public void keyReleased(KeyEvent e) {
-//                if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN ||
-//                        e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_LEFT ||
-//                        e.getKeyCode() == KeyEvent.VK_RIGHT) {
-//                    return;
-//                }
-//
-//                // Dùng SwingWorker cho việc load danh sách thuốc gợi ý để không lag phím gõ
-//                new SwingWorker<List<Thuoc>, Void>() {
-//                    @Override
-//                    protected List<Thuoc> doInBackground() throws Exception {
-//                        if (listThuocTam == null) {
-//                            return thuocService.layListThuocHoanChinh(); // Gọi mạng
-//                        }
-//                        return listThuocTam;
-//                    }
-//
-//                    @Override
-//                    protected void done() {
-//                        try {
-//                            listThuocTam = new ArrayList<>(get());
-//                            String text = textfield.getText();
-//                            int caretPos = textfield.getCaretPosition();
-//                            ArrayList<String> ketQuaLoc = new ArrayList<>();
-//
-//                            for (Thuoc t : listThuocTam) {
-//                                if (t.getTenThuoc().toLowerCase().contains(text.toLowerCase())) {
-//                                    ketQuaLoc.add(t.getTenThuoc());
-//                                }
-//                            }
-//
-//                            DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) cmb.getModel();
-//                            model.removeAllElements();
-//
-//                            for (String s : ketQuaLoc) {
-//                                model.addElement(s);
-//                            }
-//
-//                            textfield.setText(text);
-//                            try {
-//                                textfield.setCaretPosition(caretPos);
-//                            } catch (Exception ex) {}
-//
-//                            if (!ketQuaLoc.isEmpty() && !text.isEmpty()) {
-//                                cmb.showPopup();
-//                            } else if (text.isEmpty()) {
-//                                cmb.hidePopup();
-//                            }
-//                        } catch (Exception ex) {
-//                            ex.printStackTrace();
-//                        }
-//                    }
-//                }.execute();
-//            }
-//        });
-//    }
+    public void caiDatGoiYThuoc(JComboBox<String> cmb) {
+        cmb.setEditable(true);
+        final JTextField textfield = (JTextField) cmb.getEditor().getEditorComponent();
+
+        textfield.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN ||
+                        e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_LEFT ||
+                        e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    return;
+                }
+
+                // Dùng SwingWorker cho việc load danh sách thuốc gợi ý để không lag phím gõ
+                new SwingWorker<List<Thuoc>, Void>() {
+                    @Override
+                    protected List<Thuoc> doInBackground() throws Exception {
+                        if (listThuocTam == null) {
+                            return thuocService.layListThuocHoanChinh(); // Gọi mạng
+                        }
+                        return listThuocTam;
+                    }
+
+                    @Override
+                    protected void done() {
+                        try {
+                            listThuocTam = new ArrayList<>(get());
+                            String text = textfield.getText();
+                            int caretPos = textfield.getCaretPosition();
+                            ArrayList<String> ketQuaLoc = new ArrayList<>();
+
+                            for (Thuoc t : listThuocTam) {
+                                if (t.getTenThuoc().toLowerCase().contains(text.toLowerCase())) {
+                                    ketQuaLoc.add(t.getTenThuoc());
+                                }
+                            }
+
+                            DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) cmb.getModel();
+                            model.removeAllElements();
+
+                            for (String s : ketQuaLoc) {
+                                model.addElement(s);
+                            }
+
+                            textfield.setText(text);
+                            try {
+                                textfield.setCaretPosition(caretPos);
+                            } catch (Exception ex) {}
+
+                            if (!ketQuaLoc.isEmpty() && !text.isEmpty()) {
+                                cmb.showPopup();
+                            } else if (text.isEmpty()) {
+                                cmb.hidePopup();
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }.execute();
+            }
+        });
+    }
 }

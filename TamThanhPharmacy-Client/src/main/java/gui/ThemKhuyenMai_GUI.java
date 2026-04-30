@@ -223,8 +223,8 @@ public class ThemKhuyenMai_GUI extends JPanel {
         cmbPhuongThuc.addActionListener(e -> chonPhuongThucKM());
         chonPhuongThucKM();
 
-//        kmCtrl.setDuLieuChoCmbThuoc(cmbThemThuoc);
-//        btnThemThuoc.addActionListener(e -> kmCtrl.themThuocVaoBangThemKM());
+        kmCtrl.setDuLieuChoCmbThuoc(cmbThemThuoc);
+        btnThemThuoc.addActionListener(e -> kmCtrl.themThuocVaoBangThemKM());
         btnThem.addActionListener(e -> {
         	kmCtrl.themKhuyenMai();
         	lamMoi();
