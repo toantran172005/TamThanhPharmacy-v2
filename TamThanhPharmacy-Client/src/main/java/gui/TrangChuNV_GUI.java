@@ -9,8 +9,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
 
-//import controller.DangNhapCtrl;
 //import controller.ToolCtrl;
+import controller.DangNhapController;
 import entity.NhanVien;
 import entity.TaiKhoan;
 import utils.ToolCtrl;
@@ -95,118 +95,118 @@ public class TrangChuNV_GUI extends JFrame {
 		thietLapMenu("Hóa Đơn", "/picture/trangChu/order.png", taoPanelTam("Hóa Đơn"));
 
 		this.taiKhoan = tk;
-//		this.nhanVien = tk.getNhanVien();
+		this.nhanVien = tk.getNhanVien();
 		setThuocTinhMainMenu();
 		hienThiTrangChu();
 		// taoMappingPanel();
-//		hienThiThongTinNhanVien();
-//		ganSuKien();
+		hienThiThongTinNhanVien();
+		ganSuKien();
 
 		setVisible(true);
 	}
 
-//	public void hienThiThongTinNhanVien() {
-//		if (nhanVien != null) {
-//			hienThiAnhNhanVien();
-//			lblTenNV.setText(nhanVien.getTenNV());
-//			lblChucVu.setText(
-//					taiKhoan.getLoaiTK().equalsIgnoreCase("Quản lý") ? "Nhân viên quản lý" : "Nhân viên bán hàng");
-//		}
-//	}
+	public void hienThiThongTinNhanVien() {
+		if (nhanVien != null) {
+			hienThiAnhNhanVien();
+			lblTenNV.setText(nhanVien.getTenNV());
+			lblChucVu.setText(
+					taiKhoan.getLoaiTK().equalsIgnoreCase("Quản lý") ? "Nhân viên quản lý" : "Nhân viên bán hàng");
+		}
+	}
 
 	// ========== TẢI HÌNH ẢNH ==========
 	public Image taiAnh(String duongDanTuDB) {
 		try {
 			if (duongDanTuDB == null || duongDanTuDB.trim().isEmpty()) {
-				return new ImageIcon(System.getProperty("user.dir") + "/resource/picture/default.png").getImage();
+				return new ImageIcon(System.getProperty("user.dir") + "/src/main/resources/picture/default.png").getImage();
 			}
 
-			File file = new File(System.getProperty("user.dir") + "/resource" + duongDanTuDB);
+			File file = new File(System.getProperty("user.dir") + "/src/main/resources/" + duongDanTuDB);
 
 			if (file.exists()) {
 				return new ImageIcon(file.getAbsolutePath()).getImage();
 			} else {
-				return new ImageIcon(System.getProperty("user.dir") + "/resource/picture/default.png").getImage();
+				return new ImageIcon(System.getProperty("user.dir") + "/src/main/resources/picture/default.png").getImage();
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ImageIcon(System.getProperty("user.dir") + "/resource/picture/default.png").getImage();
+			return new ImageIcon(System.getProperty("user.dir") + "/src/main/resources/picture/default.png").getImage();
 		}
 	}
 
-//	public void hienThiAnhNhanVien() {
-//		if (nhanVien == null || nhanVien.getAnh() == null) {
-//
-//			imgTaiKhoan.setIcon(setUpIcon("/picture/trangChu/user.png", 20, 20));
-//			return;
-//		}
-//
-//		Image img = taiAnh(nhanVien.getAnh());
-//		ImageIcon icon = new ImageIcon(img.getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-//		imgTaiKhoan.setIcon(icon);
-//	}
+	public void hienThiAnhNhanVien() {
+		if (nhanVien == null || nhanVien.getAnh() == null) {
 
-//	private void ganSuKien() {
-//		imgTaiKhoan.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				xemThongTinNhanVienDangNhap();
-//			}
-//		});
-//
-//		imgDangXuat.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				int result = JOptionPane.showConfirmDialog(TrangChuNV_GUI.this, "Bạn có chắc chắn muốn đăng xuất?",
-//						"Xác nhận", JOptionPane.YES_NO_OPTION);
-//				if (result == JOptionPane.YES_OPTION) {
-//					dispose();
-//					DangNhap_GUI gui = new DangNhap_GUI();
-//					new DangNhapCtrl(gui);
-//					gui.setVisible(true);
-//				}
-//			}
-//		});
-//	}
+			imgTaiKhoan.setIcon(setUpIcon("/picture/trangChu/user.png", 20, 20));
+			return;
+		}
 
-//	public void xemThongTinNhanVienDangNhap() {
-//		if (nhanVien == null) {
-//			JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin nhân viên!", "Lỗi",
-//					JOptionPane.ERROR_MESSAGE);
-//			return;
-//		}
-//
-//		ChiTietNhanVien_GUI chiTietPanel = new ChiTietNhanVien_GUI(this);
-//		setUpNoiDung(chiTietPanel);
-//
-////		chiTietPanel.getCtrl().setNhanVienHienTai(nhanVien);
-//	}
+		Image img = taiAnh(nhanVien.getAnh());
+		ImageIcon icon = new ImageIcon(img.getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+		imgTaiKhoan.setIcon(icon);
+	}
+
+	private void ganSuKien() {
+		imgTaiKhoan.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				xemThongTinNhanVienDangNhap();
+			}
+		});
+
+		imgDangXuat.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int result = JOptionPane.showConfirmDialog(TrangChuNV_GUI.this, "Bạn có chắc chắn muốn đăng xuất?",
+						"Xác nhận", JOptionPane.YES_NO_OPTION);
+				if (result == JOptionPane.YES_OPTION) {
+					dispose();
+					DangNhap_GUI gui = new DangNhap_GUI();
+					new DangNhapController(gui);
+					gui.setVisible(true);
+				}
+			}
+		});
+	}
+
+	public void xemThongTinNhanVienDangNhap() {
+		if (nhanVien == null) {
+			JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin nhân viên!", "Lỗi",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		ChiTietNhanVien_GUI chiTietPanel = new ChiTietNhanVien_GUI(this);
+		setUpNoiDung(chiTietPanel);
+
+		chiTietPanel.getCtrl().setNhanVienHienTai(nhanVien);
+	}
 
 	/** Ánh xạ tên menu hoặc menu con sang panel tương ứng */
-//	public void taoMappingPanel() {
-//		// Menu chính
-//		panelMapping.put("Trang chủ", taoPanelTrangChu());
-//		panelMapping.put("Thuốc", taoPanelTam("Thuốc"));
-//		panelMapping.put("Kệ Thuốc", taoPanelTam("Kệ Thuốc"));
-//		panelMapping.put("Khách Hàng", taoPanelTam("Khách Hàng"));
-//		panelMapping.put("Hóa Đơn", taoPanelTam("Hóa Đơn"));
-//
-//		// Menu con
-//		panelMapping.put("Tìm kiếm thuốc", new TimKiemThuoc_GUI());
-//		panelMapping.put("Thêm thuốc", new ThemThuoc_GUI());
-//		panelMapping.put("Đơn vị", new DonVi_GUI());
-//		panelMapping.put("Danh sách kệ", new DanhSachKeThuoc_GUI());
-//		panelMapping.put("Thêm kệ thuốc", new ThemKeThuoc_GUI());
-//		panelMapping.put("Tìm kiếm khách hàng", new TimKiemKH_GUI());
-//		panelMapping.put("Thêm khách hàng", new ThemKhachHang_GUI());
-//		panelMapping.put("Khiếu nại & Hỗ trợ", new DanhSachKhieuNaiVaHoTroHK_GUI());
-//		panelMapping.put("Tìm kiếm hóa đơn", new TimKiemHD_GUI(this));
-//		panelMapping.put("Danh sách phiếu đặt thuốc", new TimKiemPhieuDatHang_GUI(this));
-//		panelMapping.put("Lập hóa đơn", new LapHoaDon_GUI(this));
-//		panelMapping.put("Đặt thuốc", new LapPhieuDatHang_GUI(this));
-//		panelMapping.put("Danh sách phiếu đổi trả", new TimKiemPhieuDoiTra_GUI(this));
-//	}
+	public void taoMappingPanel() {
+		// Menu chính
+		panelMapping.put("Trang chủ", taoPanelTrangChu());
+		panelMapping.put("Thuốc", taoPanelTam("Thuốc"));
+		panelMapping.put("Kệ Thuốc", taoPanelTam("Kệ Thuốc"));
+		panelMapping.put("Khách Hàng", taoPanelTam("Khách Hàng"));
+		panelMapping.put("Hóa Đơn", taoPanelTam("Hóa Đơn"));
+
+		// Menu con
+		panelMapping.put("Tìm kiếm thuốc", new TimKiemThuoc_GUI());
+		panelMapping.put("Thêm thuốc", new ThemThuoc_GUI());
+		panelMapping.put("Đơn vị", new DonVi_GUI());
+		panelMapping.put("Danh sách kệ", new DanhSachKeThuoc_GUI());
+		panelMapping.put("Thêm kệ thuốc", new ThemKeThuoc_GUI());
+		panelMapping.put("Tìm kiếm khách hàng", new TimKiemKH_GUI());
+		panelMapping.put("Thêm khách hàng", new ThemKhachHang_GUI());
+		panelMapping.put("Khiếu nại & Hỗ trợ", new DanhSachKhieuNaiVaHoTroHK_GUI());
+		panelMapping.put("Tìm kiếm hóa đơn", new TimKiemHD_GUI(this));
+		panelMapping.put("Danh sách phiếu đặt thuốc", new TimKiemPhieuDatHang_GUI(this));
+		panelMapping.put("Lập hóa đơn", new LapHoaDon_GUI(this));
+		panelMapping.put("Đặt thuốc", new LapPhieuDatHang_GUI(this));
+		panelMapping.put("Danh sách phiếu đổi trả", new TimKiemPhieuDoiTra_GUI(this));
+	}
 
 	public JPanel taoPanelTheoTenMenu(String tenMenu) {
 		switch (tenMenu) {
@@ -215,12 +215,12 @@ public class TrangChuNV_GUI extends JFrame {
 			return taoPanelTrangChu();
 
 		// === MENU CON CỦA THUỐC ===
-//		case "Tìm kiếm thuốc":
-//			return new TimKiemThuoc_GUI();
-//		case "Thêm thuốc":
-//			return new ThemThuoc_GUI();
-//		case "Đơn vị":
-//			return new DonVi_GUI();
+		case "Tìm kiếm thuốc":
+			return new TimKiemThuoc_GUI();
+		case "Thêm thuốc":
+			return new ThemThuoc_GUI();
+		case "Đơn vị":
+			return new DonVi_GUI();
 //
 		// === MENU CON CỦA KỆ THUỐC ===
 		case "Danh sách kệ":
@@ -228,26 +228,26 @@ public class TrangChuNV_GUI extends JFrame {
 		case "Thêm kệ thuốc":
 			return new ThemKeThuoc_GUI();
 
-//		// === MENU CON CỦA KHÁCH HÀNG ===
-//		case "Tìm kiếm khách hàng":
-//			return new TimKiemKH_GUI();
-//		case "Thêm khách hàng":
-//			return new ThemKhachHang_GUI();
-//		case "Khiếu nại & Hỗ trợ":
-//			return new DanhSachKhieuNaiVaHoTroHK_GUI();
-//
+		// === MENU CON CỦA KHÁCH HÀNG ===
+		case "Tìm kiếm khách hàng":
+			return new TimKiemKH_GUI();
+		case "Thêm khách hàng":
+			return new ThemKhachHang_GUI();
+		case "Khiếu nại & Hỗ trợ":
+			return new DanhSachKhieuNaiVaHoTroHK_GUI();
+
 //		// === MENU CON CỦA HÓA ĐƠN ===
 //		// Lưu ý: Các GUI này cần truyền 'this' (TrangChuNV_GUI) vào constructor
-//		case "Tìm kiếm hóa đơn":
-//			return new TimKiemHD_GUI(this);
-//		case "Danh sách phiếu đặt thuốc":
-//			return new TimKiemPhieuDatHang_GUI(this);
-//		case "Lập hóa đơn":
-//			return new LapHoaDon_GUI(this);
-//		case "Đặt thuốc":
-////			return new LapPhieuDatHang_GUI(this);
-//		case "Danh sách phiếu đổi trả":
-//			return new TimKiemPhieuDoiTra_GUI(this);
+		case "Tìm kiếm hóa đơn":
+			return new TimKiemHD_GUI(this);
+		case "Danh sách phiếu đặt thuốc":
+			return new TimKiemPhieuDatHang_GUI(this);
+		case "Lập hóa đơn":
+			return new LapHoaDon_GUI(this);
+		case "Đặt thuốc":
+			return new LapPhieuDatHang_GUI(this);
+		case "Danh sách phiếu đổi trả":
+			return new TimKiemPhieuDoiTra_GUI(this);
 
 		// === MENU CHA (Dùng panel tạm) ===
 		case "Thuốc":

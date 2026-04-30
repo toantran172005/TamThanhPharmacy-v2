@@ -61,7 +61,7 @@ public class NhapThuocController {
         model.setRowCount(0);
 
         try (FileInputStream fis = new FileInputStream(file);
-             Workbook workbook = new XSSFWorkbook(fis)) {
+             Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(fis)) {
 
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
@@ -72,31 +72,41 @@ public class NhapThuocController {
                 Row row = rowIterator.next();
                 if(isFirstRow) { isFirstRow = false; continue; }
 
-                Object[] rowData = new Object[13];
+                Object[] rowData = new Object[12];
                 rowData[0] = stt++;
 
-                for(int i = 1; i < 13; i++) {
+                for(int i = 1; i < 12; i++) {
                     Cell cell = row.getCell(i);
                     if(cell == null) {
                         rowData[i] = "";
                     } else {
-                        if (i == 7 && cell.getCellType() == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
+                        if (i == 6 && cell.getCellType() == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
                             Date date = cell.getDateCellValue();
                             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                             rowData[i] = sdf.format(date);
                         } else {
                             switch (cell.getCellType()) {
-                                case STRING: rowData[i] = cell.getStringCellValue(); break;
+                                case STRING:
+                                    rowData[i] = cell.getStringCellValue();
+                                    break;
                                 case NUMERIC:
                                     if(DateUtil.isCellDateFormatted(cell)) {
                                         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                                         rowData[i] = sdf.format(cell.getDateCellValue());
                                     } else {
-                                        rowData[i] = cell.getNumericCellValue();
+                                        double val = cell.getNumericCellValue();
+                                        if (val == Math.floor(val)) {
+                                            rowData[i] = (long) val;
+                                        } else {
+                                            rowData[i] = val;
+                                        }
                                     }
                                     break;
-                                case BOOLEAN: rowData[i] = cell.getBooleanCellValue(); break;
-                                default: rowData[i] = "";
+                                case BOOLEAN:
+                                    rowData[i] = cell.getBooleanCellValue();
+                                    break;
+                                default:
+                                    rowData[i] = "";
                             }
                         }
                     }
@@ -107,7 +117,7 @@ public class NhapThuocController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            tool.hienThiThongBao("Lỗi", "Không thể đọc file Excel", false);
+            tool.hienThiThongBao("Lỗi", "Không thể đọc file Excel: " + e.getMessage(), false);
         }
     }
 
@@ -144,12 +154,15 @@ public class NhapThuocController {
                     int soLuong = (int) Double.parseDouble(row[7].toString());
                     double donGia = Double.parseDouble(row[8].toString());
                     double tyLeThueVal = Double.parseDouble(row[9].toString());
-                    String loaiThue = row[11].toString();
+                    String loaiThue = row[10].toString();
 
                     Thue thueObj = new Thue();
                     thueObj.setLoaiThue(loaiThue);
                     thueObj.setTyLeThue(tyLeThueVal);
                     String maThue = thuocService.layHoacTaoThue(thueObj);
+                    if (maThue == null) {
+                        throw new RuntimeException("Không tạo được mã thuế cho: " + loaiThue);
+                    }
                     thueObj.setMaThue(maThue);
 
                     DonViTinh dvtObj = new DonViTinh();

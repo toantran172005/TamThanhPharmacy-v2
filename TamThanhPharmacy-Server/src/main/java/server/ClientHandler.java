@@ -28,7 +28,7 @@ public class ClientHandler extends Thread {
     private PhieuDatHangRepositoryImpl pdhRepo = new PhieuDatHangRepositoryImpl();
     private PhieuDoiTraRepositoryImpl pdtRepo = new PhieuDoiTraRepositoryImpl();
     private HoaDonRepositoryImpl hdRepo = new HoaDonRepositoryImpl();
-    private KhachHangRepositoryImpl khachHangRepo = new KhachHangRepositoryImpl();
+    private KhachHangRepositoryImpl khRepo = new KhachHangRepositoryImpl();
     private PhieuKNHTRepositoryImpl knhtRepo = new PhieuKNHTRepositoryImpl();
 
     public ClientHandler(Socket socket) {
@@ -437,88 +437,158 @@ public class ClientHandler extends Thread {
                         break;
 
 
-                    //KHÁCH HÀNG
-                    case "TIM_KH_SDT":
+//                    //KHÁCH HÀNG
+//                    case "TIM_KH_SDT":
+//                        String sdt = (String) req.getData();
+//                        KhachHang khSdt = khachHangRepo.timKhachHangTheoSDT(sdt);
+//                        res = (khSdt != null) ? new Response("SUCCESS", khSdt, "Tìm thấy khách hàng")
+//                                : new Response("ERROR", null, "Không tìm thấy khách hàng");
+//                        break;
+//
+//                    case "THEM_KHACH_HANG":
+//                        KhachHang khMoi = (KhachHang) req.getData();
+//                        boolean isThem = khachHangRepo.themKhachHang(khMoi);
+//                        res = isThem ? new Response("SUCCESS", true, "Thêm thành công")
+//                                : new Response("ERROR", false, "Thêm thất bại");
+//                        break;
+//
+//                    case "CAP_NHAT_KHACH_HANG":
+//                        KhachHang khUpdate = (KhachHang) req.getData();
+//                        boolean isUpdate = khachHangRepo.capNhatKhachHang(khUpdate);
+//                        res = isUpdate ? new Response("SUCCESS", true, "Cập nhật thành công")
+//                                : new Response("ERROR", false, "Cập nhật thất bại");
+//                        break;
+//
+//                    case "XOA_KHACH_HANG":
+//                        String maXoaKH = (String) req.getData();
+//                        boolean isXoa = khachHangRepo.xoaKhachHang(maXoaKH);
+//                        res = isXoa ? new Response("SUCCESS", true, "Đã xóa mềm")
+//                                : new Response("ERROR", false, "Lỗi khi xóa");
+//                        break;
+//
+//                    case "KHOI_PHUC_KHACH_HANG":
+//                        String maKPKH = (String) req.getData();
+//                        boolean isKP = khachHangRepo.khoiPhucKhachHang(maKPKH);
+//                        res = isKP ? new Response("SUCCESS", true, "Đã khôi phục")
+//                                : new Response("ERROR", false, "Lỗi khôi phục");
+//                        break;
+//
+//                    case "LAY_LIST_KHACH_HANG":
+//                        List<KhachHang> listKH = khachHangRepo.layListKhachHang();
+//                        res = new Response("SUCCESS", listKH, "Tải danh sách thành công");
+//                        break;
+//
+//                    case "LAY_LIST_KHACHHANG_THONG_KE":
+//                        Object[] paramTK = (Object[]) req.getData();
+//                        LocalDate ngayBD_TK = (LocalDate) paramTK[0];
+//                        LocalDate ngayKT_TK = (LocalDate) paramTK[1];
+//
+//                        List<KhachHang> ketQuaTK = khachHangRepo.layListKHThongKe(ngayBD_TK, ngayKT_TK);
+//
+//                        if (ketQuaTK != null) {
+//                            res = new Response("SUCCESS", ketQuaTK, "Lấy danh sách thống kê thành công");
+//                        } else {
+//                            res = new Response("ERROR", null, "Lấy danh sách thống kê thất bại");
+//                        }
+//                        break;
+//
+//                    case "LAY_TONG_DON_HANG_THEO_NGAY":
+//                        Object[] paramDH = (Object[]) req.getData();
+//                        LocalDate ngayBD_DH = (LocalDate) paramDH[0];
+//                        LocalDate ngayKT_DH = (LocalDate) paramDH[1];
+//
+//                        Map<String, Integer> ketQuaDH = khachHangRepo.layTongDonHangTheoNgay(ngayBD_DH, ngayKT_DH);
+//
+//                        if (ketQuaDH != null) {
+//                            res = new Response("SUCCESS", ketQuaDH, "Lấy tổng đơn hàng thành công");
+//                        } else {
+//                            res = new Response("ERROR", null, "Lấy tổng đơn hàng thất bại");
+//                        }
+//                        break;
+//
+//                    case "LAY_TONG_TIEN_THEO_NGAY":
+//                        Object[] paramTT = (Object[]) req.getData();
+//                        LocalDate ngayBD_TT = (LocalDate) paramTT[0];
+//                        LocalDate ngayKT_TT = (LocalDate) paramTT[1];
+//
+//                        Map<String, Double> ketQuaTT = khachHangRepo.layTongTienTheoNgay(ngayBD_TT, ngayKT_TT);
+//
+//                        if (ketQuaTT != null) {
+//                            res = new Response("SUCCESS", ketQuaTT, "Lấy tổng tiền thành công");
+//                        } else {
+//                            res = new Response("ERROR", null, "Lấy tổng tiền thất bại");
+//                        }
+//                        break;
+                    // Các case dành cho Khách Hàng (KhachHang)
+                    case "KH_THEM": {
+                        KhachHang kh = (KhachHang) req.getData();
+                        boolean result = khRepo.themKhachHang(kh);
+                        res = new Response(result ? "SUCCESS" : "ERROR", result, "");
+                        break;
+                    }
+                    case "KH_CAP_NHAT": {
+                        KhachHang kh = (KhachHang) req.getData();
+                        boolean result = khRepo.capNhatKhachHang(kh);
+                        res = new Response(result ? "SUCCESS" : "ERROR", result, "");
+                        break;
+                    }
+                    case "KH_XOA": {
+                        String maKH = (String) req.getData();
+                        boolean result = khRepo.xoaKhachHang(maKH);
+                        res = new Response(result ? "SUCCESS" : "ERROR", result, "");
+                        break;
+                    }
+                    case "KH_KHOI_PHUC": {
+                        String maKH = (String) req.getData();
+                        boolean result = khRepo.khoiPhucKhachHang(maKH);
+                        res = new Response(result ? "SUCCESS" : "ERROR", result, "");
+                        break;
+                    }
+                    case "KH_LAY_LIST": {
+                        List<KhachHang> result = khRepo.layListKhachHang();
+                        res = new Response("SUCCESS", result, "Thành công");
+                        break;
+                    }
+                    case "KH_LAY_LIST_THONG_KE": {
+                        Map<String, LocalDate> data = (Map<String, LocalDate>) req.getData();
+                        List<KhachHang> result = khRepo.layListKHThongKe(data.get("ngayBD"), data.get("ngayKT"));
+                        res = new Response("SUCCESS", result, "Thành công");
+                        break;
+                    }
+                    case "KH_TONG_DON_HANG_NGAY": {
+                        Map<String, LocalDate> data = (Map<String, LocalDate>) req.getData();
+                        Map<String, Integer> result = khRepo.layTongDonHangTheoNgay(data.get("ngayBD"), data.get("ngayKT"));
+                        res = new Response("SUCCESS", result, "Thành công");
+                        break;
+                    }
+                    case "KH_TONG_TIEN_NGAY": {
+                        Map<String, LocalDate> data = (Map<String, LocalDate>) req.getData();
+                        Map<String, Double> result = khRepo.layTongTienTheoNgay(data.get("ngayBD"), data.get("ngayKT"));
+                        res = new Response("SUCCESS", result, "Thành công");
+                        break;
+                    }
+                    case "KH_TAT_CA_TONG_DON": {
+                        Map<String, Integer> result = khRepo.layTatCaTongDonHang();
+                        res = new Response("SUCCESS", result, "Thành công");
+                        break;
+                    }
+                    case "KH_TAT_CA_TONG_TIEN": {
+                        Map<String, Double> result = khRepo.layTatCaTongTien();
+                        res = new Response("SUCCESS", result, "Thành công");
+                        break;
+                    }
+                    case "KH_TIM_THEO_SDT": {
                         String sdt = (String) req.getData();
-                        KhachHang khSdt = khachHangRepo.timKhachHangTheoSDT(sdt);
-                        res = (khSdt != null) ? new Response("SUCCESS", khSdt, "Tìm thấy khách hàng")
-                                : new Response("ERROR", null, "Không tìm thấy khách hàng");
+                        KhachHang result = khRepo.timKhachHangTheoSDT(sdt);
+                        res = new Response(result != null ? "SUCCESS" : "ERROR", result, "");
                         break;
-
-                    case "THEM_KHACH_HANG":
-                        KhachHang khMoi = (KhachHang) req.getData();
-                        boolean isThem = khachHangRepo.themKhachHang(khMoi);
-                        res = isThem ? new Response("SUCCESS", true, "Thêm thành công")
-                                : new Response("ERROR", false, "Thêm thất bại");
+                    }
+                    case "KH_TIM_THEO_MA": {
+                        String maKH = (String) req.getData();
+                        KhachHang result = khRepo.timKhachHangTheoMa(maKH);
+                        res = new Response(result != null ? "SUCCESS" : "ERROR", result, "");
                         break;
-
-                    case "CAP_NHAT_KHACH_HANG":
-                        KhachHang khUpdate = (KhachHang) req.getData();
-                        boolean isUpdate = khachHangRepo.capNhatKhachHang(khUpdate);
-                        res = isUpdate ? new Response("SUCCESS", true, "Cập nhật thành công")
-                                : new Response("ERROR", false, "Cập nhật thất bại");
-                        break;
-
-                    case "XOA_KHACH_HANG":
-                        String maXoaKH = (String) req.getData();
-                        boolean isXoa = khachHangRepo.xoaKhachHang(maXoaKH);
-                        res = isXoa ? new Response("SUCCESS", true, "Đã xóa mềm")
-                                : new Response("ERROR", false, "Lỗi khi xóa");
-                        break;
-
-                    case "KHOI_PHUC_KHACH_HANG":
-                        String maKPKH = (String) req.getData();
-                        boolean isKP = khachHangRepo.khoiPhucKhachHang(maKPKH);
-                        res = isKP ? new Response("SUCCESS", true, "Đã khôi phục")
-                                : new Response("ERROR", false, "Lỗi khôi phục");
-                        break;
-
-                    case "LAY_LIST_KHACH_HANG":
-                        List<KhachHang> listKH = khachHangRepo.layListKhachHang();
-                        res = new Response("SUCCESS", listKH, "Tải danh sách thành công");
-                        break;
-
-                    case "LAY_LIST_KHACHHANG_THONG_KE":
-                        Object[] paramTK = (Object[]) req.getData();
-                        LocalDate ngayBD_TK = (LocalDate) paramTK[0];
-                        LocalDate ngayKT_TK = (LocalDate) paramTK[1];
-
-                        List<KhachHang> ketQuaTK = khachHangRepo.layListKHThongKe(ngayBD_TK, ngayKT_TK);
-
-                        if (ketQuaTK != null) {
-                            res = new Response("SUCCESS", ketQuaTK, "Lấy danh sách thống kê thành công");
-                        } else {
-                            res = new Response("ERROR", null, "Lấy danh sách thống kê thất bại");
-                        }
-                        break;
-
-                    case "LAY_TONG_DON_HANG_THEO_NGAY":
-                        Object[] paramDH = (Object[]) req.getData();
-                        LocalDate ngayBD_DH = (LocalDate) paramDH[0];
-                        LocalDate ngayKT_DH = (LocalDate) paramDH[1];
-
-                        Map<String, Integer> ketQuaDH = khachHangRepo.layTongDonHangTheoNgay(ngayBD_DH, ngayKT_DH);
-
-                        if (ketQuaDH != null) {
-                            res = new Response("SUCCESS", ketQuaDH, "Lấy tổng đơn hàng thành công");
-                        } else {
-                            res = new Response("ERROR", null, "Lấy tổng đơn hàng thất bại");
-                        }
-                        break;
-
-                    case "LAY_TONG_TIEN_THEO_NGAY":
-                        Object[] paramTT = (Object[]) req.getData();
-                        LocalDate ngayBD_TT = (LocalDate) paramTT[0];
-                        LocalDate ngayKT_TT = (LocalDate) paramTT[1];
-
-                        Map<String, Double> ketQuaTT = khachHangRepo.layTongTienTheoNgay(ngayBD_TT, ngayKT_TT);
-
-                        if (ketQuaTT != null) {
-                            res = new Response("SUCCESS", ketQuaTT, "Lấy tổng tiền thành công");
-                        } else {
-                            res = new Response("ERROR", null, "Lấy tổng tiền thất bại");
-                        }
-                        break;
+                    }
 
                     //KNHT _ KHÁCH HÀNG
                     case "LAY_TAT_CA_PHIEU_KNHT":

@@ -135,7 +135,11 @@ public class ThuocRepositoryImpl extends GenericJpa implements ThuocRepository {
                         .setMaxResults(1).getSingleResult();
             } catch (NoResultException e) {
                 inTransaction(emIn -> {
+                    repository.impl.ToolRepositoryImpl toolRepo = new repository.impl.ToolRepositoryImpl();
+                    thue.setMaThue(toolRepo.taoKhoaChinh("T"));
+
                     thue.setTyLeThue(thue.getTyLeThue() / 100.0);
+                    thue.setTrangThai(true);
                     emIn.persist(thue);
                 });
                 return thue.getMaThue();
@@ -150,7 +154,13 @@ public class ThuocRepositoryImpl extends GenericJpa implements ThuocRepository {
                 String jpql = "SELECT d.maDVT FROM DonViTinh d WHERE d.tenDVT = :ten";
                 return em.createQuery(jpql, String.class).setParameter("ten", dvt.getTenDVT()).setMaxResults(1).getSingleResult();
             } catch (NoResultException e) {
-                inTransaction(emIn -> emIn.persist(dvt));
+                inTransaction(emIn -> {
+                    repository.impl.ToolRepositoryImpl toolRepo = new repository.impl.ToolRepositoryImpl();
+                    dvt.setMaDVT(toolRepo.taoKhoaChinh("DVT"));
+
+                    dvt.setTrangThai(true);
+                    emIn.persist(dvt);
+                });
                 return dvt.getMaDVT();
             }
         });
@@ -204,12 +214,51 @@ public class ThuocRepositoryImpl extends GenericJpa implements ThuocRepository {
     public boolean luuData(String maPNT, String maNCC, String maNV, LocalDate ngayNhap, List<Thuoc> listThuoc) {
         try {
             inTransaction(em -> {
-                for(Thuoc t : listThuoc) {
-                    em.persist(t);
+                for (Thuoc t : listThuoc) {
+
+                    // 1. Dùng em.merge() để ép JPA quản lý các đối tượng con.
+                    // Trị dứt điểm lỗi TransientObjectException (unsaved transient instance)
+                    if (t.getThue() != null && t.getThue().getMaThue() != null) {
+                        t.setThue(em.merge(t.getThue()));
+                    }
+                    if (t.getDonViTinh() != null && t.getDonViTinh().getMaDVT() != null) {
+                        t.setDonViTinh(em.merge(t.getDonViTinh()));
+                    }
+                    if (t.getQuocGia() != null && t.getQuocGia().getMaQuocGia() != null) {
+                        t.setQuocGia(em.merge(t.getQuocGia()));
+                    }
+                    if (t.getKeThuoc() != null && t.getKeThuoc().getMaKe() != null) {
+                        t.setKeThuoc(em.merge(t.getKeThuoc()));
+                    }
+                    if (t.getKhuyenMai() != null && t.getKhuyenMai().getMaKM() != null) {
+                        t.setKhuyenMai(em.merge(t.getKhuyenMai()));
+                    }
+
+                    // --- KIỂM TRA THUỐC ĐÃ TỒN TẠI HAY CHƯA ---
+                    Thuoc existingThuoc = em.find(Thuoc.class, t.getMaThuoc());
+
+                    if (existingThuoc != null) {
+                        // NẾU ĐÃ TỒN TẠI: Cộng dồn số lượng và cập nhật thông tin
+                        existingThuoc.setSoLuong(existingThuoc.getSoLuong() + t.getSoLuong());
+                        existingThuoc.setGiaBan(t.getGiaBan());
+                        existingThuoc.setHanSuDung(t.getHanSuDung());
+                        existingThuoc.setDangThuoc(t.getDangThuoc());
+
+                        existingThuoc.setThue(t.getThue());
+                        existingThuoc.setDonViTinh(t.getDonViTinh());
+                        existingThuoc.setQuocGia(t.getQuocGia());
+
+                        em.merge(existingThuoc);
+                    } else {
+                        // NẾU LÀ THUỐC MỚI: Tiến hành Thêm mới
+                        em.persist(t);
+                    }
                 }
             });
             return true;
         } catch (Exception e) {
+            System.err.println("Lỗi Transaction luuData: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -383,6 +432,7 @@ public class ThuocRepositoryImpl extends GenericJpa implements ThuocRepository {
 
     @Override
     public Thuoc layThuocDeDat(String maThuoc) {
+
         return doInTransaction(em -> em.find(Thuoc.class, maThuoc));
     }
 

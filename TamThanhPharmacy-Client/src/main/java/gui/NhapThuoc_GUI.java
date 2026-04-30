@@ -10,9 +10,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 
-//import controller.NhapThuocCtrl;
-//import controller.ToolCtrl;
-
 public class NhapThuoc_GUI extends JPanel {
 
 	public ToolCtrl tool = new ToolCtrl();

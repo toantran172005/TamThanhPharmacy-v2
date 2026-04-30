@@ -36,14 +36,14 @@ public class KhuyenMaiService {
         return res.getStatus().equals("SUCCESS") && (boolean) res.getData();
     }
 
-    @SuppressWarnings("unchecked")
+
     public List<KhuyenMai> layDanhSachKM() throws Exception {
         Request req = new Request("LAY_DANH_SACH_KM", null);
         Response res = ClientSocketManager.getInstance().sendRequest(req);
         return res.getStatus().equals("SUCCESS") ? (List<KhuyenMai>) res.getData() : null;
     }
 
-    @SuppressWarnings("unchecked")
+
     public List<KhuyenMai> layDanhSachDaXoa() throws Exception {
         Request req = new Request("LAY_DANH_SACH_DA_XOA", null);
         Response res = ClientSocketManager.getInstance().sendRequest(req);
@@ -75,7 +75,7 @@ public class KhuyenMaiService {
         return res.getStatus().equals("SUCCESS") && (boolean) res.getData();
     }
 
-    @SuppressWarnings("unchecked")
+
     public List<Object[]> layDanhSachChiTiet(String maKM) throws Exception {
         if (maKM == null || maKM.trim().isEmpty()) return null;
         Request req = new Request("LAY_DANH_SACH_CHI_TIET", maKM);

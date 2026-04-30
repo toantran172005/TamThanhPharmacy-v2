@@ -12,7 +12,22 @@ public class PhieuKNHTRepositoryImpl extends GenericJpa implements PhieuKNHTRepo
     @Override
     public boolean themPhieu(PhieuKhieuNaiHoTroKH knht) {
         try {
-            inTransaction(em -> em.persist(knht));
+            inTransaction(em -> {
+                if (knht.getMaPhieu() == null || knht.getMaPhieu().trim().isEmpty()) {
+                    knht.setMaPhieu(sinhMaPhieuTuDong(em));
+                }
+
+                if (knht.getKhachHang() != null) {
+                    knht.setKhachHang(em.merge(knht.getKhachHang()));
+                }
+
+                if (knht.getNhanVien() != null) {
+                    knht.setNhanVien(em.merge(knht.getNhanVien()));
+
+                }
+                em.persist(knht);
+                em.flush();
+            });
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -20,12 +35,24 @@ public class PhieuKNHTRepositoryImpl extends GenericJpa implements PhieuKNHTRepo
         }
     }
 
+    private String sinhMaPhieuTuDong(EntityManager em) {
+        String jpql = "SELECT MAX(CAST(SUBSTRING(p.maPhieu, 6, LENGTH(p.maPhieu)) AS integer)) FROM PhieuKhieuNaiHoTroKH p";
+        try {
+            Integer maxNumber = em.createQuery(jpql, Integer.class).getSingleResult();
+            if (maxNumber == null) {
+                return "TTPKN1";
+            }
+            return "TTPKN" + (maxNumber + 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "TTPKN" + System.currentTimeMillis();
+        }
+    }
+
     @Override
     public boolean capNhatPhieu(PhieuKhieuNaiHoTroKH knht) {
         try {
             inTransaction(em -> {
-                // JPA tự động cập nhật các Cascade nếu đã định nghĩa trong Entity
-                // merge sẽ đồng bộ trạng thái của cả Phieu, KhachHang và NhanVien
                 em.merge(knht);
             });
             return true;
@@ -56,9 +83,6 @@ public class PhieuKNHTRepositoryImpl extends GenericJpa implements PhieuKNHTRepo
     public List<PhieuKhieuNaiHoTroKH> layTatCaPhieu() {
         return doInTransaction(em -> {
             String jpql = "SELECT p FROM PhieuKhieuNaiHoTroKH p JOIN FETCH p.nhanVien JOIN FETCH p.khachHang";
-            //            String jpql = "SELECT p FROM PhieuKhieuNaiHoTroKH p " +
-//                    "LEFT JOIN FETCH p.nhanVien " +
-//                    "LEFT JOIN FETCH p.khachHang";
             return em.createQuery(jpql, PhieuKhieuNaiHoTroKH.class).getResultList();
         });
     }
