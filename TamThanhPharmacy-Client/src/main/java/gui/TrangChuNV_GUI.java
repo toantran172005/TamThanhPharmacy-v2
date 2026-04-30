@@ -9,8 +9,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
 
-//import controller.DangNhapCtrl;
 //import controller.ToolCtrl;
+import controller.DangNhapController;
 import entity.NhanVien;
 import entity.TaiKhoan;
 import utils.ToolCtrl;
@@ -95,93 +95,93 @@ public class TrangChuNV_GUI extends JFrame {
 		thietLapMenu("Hóa Đơn", "/picture/trangChu/order.png", taoPanelTam("Hóa Đơn"));
 
 		this.taiKhoan = tk;
-//		this.nhanVien = tk.getNhanVien();
+		this.nhanVien = tk.getNhanVien();
 		setThuocTinhMainMenu();
 		hienThiTrangChu();
 		// taoMappingPanel();
-//		hienThiThongTinNhanVien();
-//		ganSuKien();
+		hienThiThongTinNhanVien();
+		ganSuKien();
 
 		setVisible(true);
 	}
 
-//	public void hienThiThongTinNhanVien() {
-//		if (nhanVien != null) {
-//			hienThiAnhNhanVien();
-//			lblTenNV.setText(nhanVien.getTenNV());
-//			lblChucVu.setText(
-//					taiKhoan.getLoaiTK().equalsIgnoreCase("Quản lý") ? "Nhân viên quản lý" : "Nhân viên bán hàng");
-//		}
-//	}
+	public void hienThiThongTinNhanVien() {
+		if (nhanVien != null) {
+			hienThiAnhNhanVien();
+			lblTenNV.setText(nhanVien.getTenNV());
+			lblChucVu.setText(
+					taiKhoan.getLoaiTK().equalsIgnoreCase("Quản lý") ? "Nhân viên quản lý" : "Nhân viên bán hàng");
+		}
+	}
 
 	// ========== TẢI HÌNH ẢNH ==========
 	public Image taiAnh(String duongDanTuDB) {
 		try {
 			if (duongDanTuDB == null || duongDanTuDB.trim().isEmpty()) {
-				return new ImageIcon(System.getProperty("user.dir") + "/resource/picture/default.png").getImage();
+				return new ImageIcon(System.getProperty("user.dir") + "/src/main/resources/picture/default.png").getImage();
 			}
 
-			File file = new File(System.getProperty("user.dir") + "/resource" + duongDanTuDB);
+			File file = new File(System.getProperty("user.dir") + "/src/main/resources/" + duongDanTuDB);
 
 			if (file.exists()) {
 				return new ImageIcon(file.getAbsolutePath()).getImage();
 			} else {
-				return new ImageIcon(System.getProperty("user.dir") + "/resource/picture/default.png").getImage();
+				return new ImageIcon(System.getProperty("user.dir") + "/src/main/resources/picture/default.png").getImage();
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ImageIcon(System.getProperty("user.dir") + "/resource/picture/default.png").getImage();
+			return new ImageIcon(System.getProperty("user.dir") + "/src/main/resources/picture/default.png").getImage();
 		}
 	}
 
-//	public void hienThiAnhNhanVien() {
-//		if (nhanVien == null || nhanVien.getAnh() == null) {
-//
-//			imgTaiKhoan.setIcon(setUpIcon("/picture/trangChu/user.png", 20, 20));
-//			return;
-//		}
-//
-//		Image img = taiAnh(nhanVien.getAnh());
-//		ImageIcon icon = new ImageIcon(img.getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-//		imgTaiKhoan.setIcon(icon);
-//	}
+	public void hienThiAnhNhanVien() {
+		if (nhanVien == null || nhanVien.getAnh() == null) {
 
-//	private void ganSuKien() {
-//		imgTaiKhoan.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				xemThongTinNhanVienDangNhap();
-//			}
-//		});
-//
-//		imgDangXuat.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				int result = JOptionPane.showConfirmDialog(TrangChuNV_GUI.this, "Bạn có chắc chắn muốn đăng xuất?",
-//						"Xác nhận", JOptionPane.YES_NO_OPTION);
-//				if (result == JOptionPane.YES_OPTION) {
-//					dispose();
-//					DangNhap_GUI gui = new DangNhap_GUI();
-//					new DangNhapCtrl(gui);
-//					gui.setVisible(true);
-//				}
-//			}
-//		});
-//	}
+			imgTaiKhoan.setIcon(setUpIcon("/picture/trangChu/user.png", 20, 20));
+			return;
+		}
 
-//	public void xemThongTinNhanVienDangNhap() {
-//		if (nhanVien == null) {
-//			JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin nhân viên!", "Lỗi",
-//					JOptionPane.ERROR_MESSAGE);
-//			return;
-//		}
-//
-//		ChiTietNhanVien_GUI chiTietPanel = new ChiTietNhanVien_GUI(this);
-//		setUpNoiDung(chiTietPanel);
-//
-////		chiTietPanel.getCtrl().setNhanVienHienTai(nhanVien);
-//	}
+		Image img = taiAnh(nhanVien.getAnh());
+		ImageIcon icon = new ImageIcon(img.getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+		imgTaiKhoan.setIcon(icon);
+	}
+
+	private void ganSuKien() {
+		imgTaiKhoan.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				xemThongTinNhanVienDangNhap();
+			}
+		});
+
+		imgDangXuat.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int result = JOptionPane.showConfirmDialog(TrangChuNV_GUI.this, "Bạn có chắc chắn muốn đăng xuất?",
+						"Xác nhận", JOptionPane.YES_NO_OPTION);
+				if (result == JOptionPane.YES_OPTION) {
+					dispose();
+					DangNhap_GUI gui = new DangNhap_GUI();
+					new DangNhapController(gui);
+					gui.setVisible(true);
+				}
+			}
+		});
+	}
+
+	public void xemThongTinNhanVienDangNhap() {
+		if (nhanVien == null) {
+			JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin nhân viên!", "Lỗi",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		ChiTietNhanVien_GUI chiTietPanel = new ChiTietNhanVien_GUI(this);
+		setUpNoiDung(chiTietPanel);
+
+		chiTietPanel.getCtrl().setNhanVienHienTai(nhanVien);
+	}
 
 	/** Ánh xạ tên menu hoặc menu con sang panel tương ứng */
 //	public void taoMappingPanel() {
@@ -240,14 +240,14 @@ public class TrangChuNV_GUI extends JFrame {
 //		// Lưu ý: Các GUI này cần truyền 'this' (TrangChuNV_GUI) vào constructor
 //		case "Tìm kiếm hóa đơn":
 //			return new TimKiemHD_GUI(this);
-//		case "Danh sách phiếu đặt thuốc":
-//			return new TimKiemPhieuDatHang_GUI(this);
+		case "Danh sách phiếu đặt thuốc":
+			return new TimKiemPhieuDatHang_GUI(this);
 //		case "Lập hóa đơn":
 //			return new LapHoaDon_GUI(this);
-//		case "Đặt thuốc":
-////			return new LapPhieuDatHang_GUI(this);
-//		case "Danh sách phiếu đổi trả":
-//			return new TimKiemPhieuDoiTra_GUI(this);
+		case "Đặt thuốc":
+			return new LapPhieuDatHang_GUI(this);
+		case "Danh sách phiếu đổi trả":
+			return new TimKiemPhieuDoiTra_GUI(this);
 
 		// === MENU CHA (Dùng panel tạm) ===
 		case "Thuốc":
