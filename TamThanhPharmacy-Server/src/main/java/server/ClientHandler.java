@@ -4,6 +4,7 @@ import entity.*;
 import network.Request;
 import network.Response;
 import repository.impl.*;
+import repository.intf.KhachHangRepository;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -22,6 +23,8 @@ public class ClientHandler extends Thread {
     private PhieuDatHangRepositoryImpl pdhRepo = new PhieuDatHangRepositoryImpl();
     private PhieuDoiTraRepositoryImpl pdtRepo = new PhieuDoiTraRepositoryImpl();
     private HoaDonRepositoryImpl hdRepo = new HoaDonRepositoryImpl();
+    private KhachHangRepositoryImpl khachHangRepo = new KhachHangRepositoryImpl();
+    private PhieuKNHTRepositoryImpl knhtRepo = new PhieuKNHTRepositoryImpl();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -430,7 +433,115 @@ public class ClientHandler extends Thread {
                         break;
 
 
+                    //KHÁCH HÀNG
+                    case "TIM_KH_SDT":
+                        String sdt = (String) req.getData();
+                        KhachHang khSdt = khachHangRepo.timKhachHangTheoSDT(sdt);
+                        res = (khSdt != null) ? new Response("SUCCESS", khSdt, "Tìm thấy khách hàng")
+                                : new Response("ERROR", null, "Không tìm thấy khách hàng");
+                        break;
 
+                    case "THEM_KHACH_HANG":
+                        KhachHang khMoi = (KhachHang) req.getData();
+                        boolean isThem = khachHangRepo.themKhachHang(khMoi);
+                        res = isThem ? new Response("SUCCESS", true, "Thêm thành công")
+                                : new Response("ERROR", false, "Thêm thất bại");
+                        break;
+
+                    case "CAP_NHAT_KHACH_HANG":
+                        KhachHang khUpdate = (KhachHang) req.getData();
+                        boolean isUpdate = khachHangRepo.capNhatKhachHang(khUpdate);
+                        res = isUpdate ? new Response("SUCCESS", true, "Cập nhật thành công")
+                                : new Response("ERROR", false, "Cập nhật thất bại");
+                        break;
+
+                    case "XOA_KHACH_HANG":
+                        String maXoaKH = (String) req.getData();
+                        boolean isXoa = khachHangRepo.xoaKhachHang(maXoaKH);
+                        res = isXoa ? new Response("SUCCESS", true, "Đã xóa mềm")
+                                : new Response("ERROR", false, "Lỗi khi xóa");
+                        break;
+
+                    case "KHOI_PHUC_KHACH_HANG":
+                        String maKPKH = (String) req.getData();
+                        boolean isKP = khachHangRepo.khoiPhucKhachHang(maKPKH);
+                        res = isKP ? new Response("SUCCESS", true, "Đã khôi phục")
+                                : new Response("ERROR", false, "Lỗi khôi phục");
+                        break;
+
+                    case "LAY_LIST_KHACH_HANG":
+                        List<KhachHang> listKH = khachHangRepo.layListKhachHang();
+                        res = new Response("SUCCESS", listKH, "Tải danh sách thành công");
+                        break;
+
+                    case "LAY_LIST_KHACHHANG_THONG_KE":
+                        Object[] paramTK = (Object[]) req.getData();
+                        LocalDate ngayBD_TK = (LocalDate) paramTK[0];
+                        LocalDate ngayKT_TK = (LocalDate) paramTK[1];
+
+                        List<KhachHang> ketQuaTK = khachHangRepo.layListKHThongKe(ngayBD_TK, ngayKT_TK);
+
+                        if (ketQuaTK != null) {
+                            res = new Response("SUCCESS", ketQuaTK, "Lấy danh sách thống kê thành công");
+                        } else {
+                            res = new Response("ERROR", null, "Lấy danh sách thống kê thất bại");
+                        }
+                        break;
+
+                    case "LAY_TONG_DON_HANG_THEO_NGAY":
+                        Object[] paramDH = (Object[]) req.getData();
+                        LocalDate ngayBD_DH = (LocalDate) paramDH[0];
+                        LocalDate ngayKT_DH = (LocalDate) paramDH[1];
+
+                        Map<String, Integer> ketQuaDH = khachHangRepo.layTongDonHangTheoNgay(ngayBD_DH, ngayKT_DH);
+
+                        if (ketQuaDH != null) {
+                            res = new Response("SUCCESS", ketQuaDH, "Lấy tổng đơn hàng thành công");
+                        } else {
+                            res = new Response("ERROR", null, "Lấy tổng đơn hàng thất bại");
+                        }
+                        break;
+
+                    case "LAY_TONG_TIEN_THEO_NGAY":
+                        Object[] paramTT = (Object[]) req.getData();
+                        LocalDate ngayBD_TT = (LocalDate) paramTT[0];
+                        LocalDate ngayKT_TT = (LocalDate) paramTT[1];
+
+                        Map<String, Double> ketQuaTT = khachHangRepo.layTongTienTheoNgay(ngayBD_TT, ngayKT_TT);
+
+                        if (ketQuaTT != null) {
+                            res = new Response("SUCCESS", ketQuaTT, "Lấy tổng tiền thành công");
+                        } else {
+                            res = new Response("ERROR", null, "Lấy tổng tiền thất bại");
+                        }
+                        break;
+
+                    //KNHT _ KHÁCH HÀNG
+                    case "LAY_TAT_CA_PHIEU_KNHT":
+                        List<PhieuKhieuNaiHoTroKH> listKNHT = knhtRepo.layTatCaPhieu();
+                        res = new Response("SUCCESS", listKNHT, "Lấy danh sách phiếu thành công");
+                        break;
+
+                    case "THEM_PHIEU_KNHT":
+                        PhieuKhieuNaiHoTroKH phieuMoi = (PhieuKhieuNaiHoTroKH) req.getData();
+                        boolean themKNHT = knhtRepo.themPhieu(phieuMoi);
+                        res = themKNHT ? new Response("SUCCESS", true, "Thêm phiếu thành công")
+                                : new Response("ERROR", false, "Lỗi khi thêm phiếu");
+                        break;
+
+                    case "CAP_NHAT_PHIEU_KNHT":
+                        PhieuKhieuNaiHoTroKH phieuSua = (PhieuKhieuNaiHoTroKH) req.getData();
+                        boolean isSua = knhtRepo.capNhatPhieu(phieuSua);
+                        res = isSua ? new Response("SUCCESS", true, "Cập nhật phiếu thành công")
+                                : new Response("ERROR", false, "Lỗi khi cập nhật phiếu");
+                        break;
+
+                    case "DOI_TRANG_THAI_PHIEU_KNHT":
+                        Object[] data = (Object[]) req.getData();
+                        boolean isDoi = knhtRepo.doiTrangThaiPhieu((String)data[0], (String)data[1]);
+                        res = isDoi ? new Response("SUCCESS", true, "Đổi trạng thái thành công")
+                                : new Response("ERROR", false, "Lỗi khi đổi trạng thái");
+                        break;
 
 
                 }
