@@ -31,8 +31,7 @@ import javax.swing.table.DefaultTableModel;
 
 //import service.DonViTinhService;
 //import service.KhachHangService;
-import service.KhuyenMaiService;
-import service.PhieuDatHangService;
+import service.*;
 //import service.ThuocService;
 
 import entity.DonViTinh;
@@ -51,9 +50,9 @@ public class LapPhieuDatHangController {
     public LapPhieuDatHang_GUI lpdhGUI;
 
     public PhieuDatHangService pdhService = new PhieuDatHangService();
-//    public DonViTinhService dvtService = new DonViTinhService();
-//    public ThuocService thService = new ThuocService();
-//    public KhachHangService khService = new KhachHangService();
+    public DonViTinhService dvtService = new DonViTinhService();
+    public ThuocService thService = new ThuocService();
+    public KhachHangService khService = new KhachHangService();
     public KhuyenMaiService kmService = new KhuyenMaiService();
 
     public List<DonViTinh> listDVT = new ArrayList<>();
@@ -65,7 +64,16 @@ public class LapPhieuDatHangController {
     public LapPhieuDatHangController(LapPhieuDatHang_GUI lpdhGUI) {
         super();
         this.lpdhGUI = lpdhGUI;
+        suKien();
         taiDuLieuNen();
+    }
+
+    // ========== GẮN SỰ KIỆN CHO CÁC NÚT BẤM ==========
+    public void suKien() {
+        lpdhGUI.btnThem.addActionListener(e -> themVaoTable());
+        lpdhGUI.btnXoa.addActionListener(e -> xoaThuoc());
+        lpdhGUI.btnLamMoi.addActionListener(e -> lamMoi());
+        lpdhGUI.btnTaoPhieuDat.addActionListener(e -> taoPhieuDat());
     }
 
     public void taiDuLieuNen() {
@@ -75,9 +83,9 @@ public class LapPhieuDatHangController {
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
-//                listKH = (ArrayList<KhachHang>) khService.layListKhachHang();
-//                listDVT = dvtService.layListDVT();
-//                listThuoc = (ArrayList<Thuoc>) thService.layListThuoc();
+                listKH = (ArrayList<KhachHang>) khService.layListKhachHang();
+                listDVT = dvtService.layListDVT();
+                listThuoc = (ArrayList<Thuoc>) thService.layListThuoc();
                 return null;
             }
 
@@ -145,117 +153,117 @@ public class LapPhieuDatHangController {
         return true;
     }
 
-//    public void taoPhieuDat() {
-//        if (ktSoDienThoaiHopLe() && ktTenKhachHangHopLe() && ktTuoiHopLe()) {
-//
-//            // 1. Thu thập tất cả dữ liệu từ UI trên luồng chính
-//            String sdtChuan = tool.chuyenSoDienThoai(lpdhGUI.txtSdt.getText());
-//            String tenKH = lpdhGUI.txtTenKH.getText().trim();
-//            int tuoiKH = Integer.parseInt(lpdhGUI.txtTuoi.getText().trim());
-//            String ghiChu = lpdhGUI.txaGhiChu.getText().trim();
-//            Date ngayHenUtil = lpdhGUI.ngayHen.getDate();
-//
-//            NhanVien nvDangNhap = null;
-//            if (lpdhGUI.getTrangChuQL() != null) nvDangNhap = lpdhGUI.getTrangChuQL().layNhanVien();
-//            else if (lpdhGUI.getTrangChuNV() != null) nvDangNhap = lpdhGUI.getTrangChuNV().layNhanVien();
-//            String maNV = nvDangNhap.getMaNV();
-//
-//            DefaultTableModel model = (DefaultTableModel) lpdhGUI.tblThuoc.getModel();
-//            if (model.getRowCount() == 0) {
-//                tool.hienThiThongBao("Lỗi", "Danh sách thuốc trống!", false);
-//                return;
-//            }
-//
-//            // Trích xuất dữ liệu bảng thành list Object[] tạm thời
-//            List<Object[]> rowDataList = new ArrayList<>();
-//            for (int i = 0; i < model.getRowCount(); i++) {
-//                String maThuoc = model.getValueAt(i, 0).toString();
-//                int soLuong = Integer.parseInt(model.getValueAt(i, 4).toString());
-//                String tenDVT = model.getValueAt(i, 5).toString();
-//                double donGia = tool.chuyenTienSangSo(model.getValueAt(i, 6).toString());
-//                rowDataList.add(new Object[]{maThuoc, soLuong, tenDVT, donGia});
-//            }
-//
-//            // 2. Chạy tiến trình xử lý Network (DB) trên Thread nền
-//            new Thread(() -> {
-//                try {
-//                    String maPDH = tool.taoKhoaChinh("PDH");
-//                    KhachHang kh = khService.timKhachHangTheoSDT(sdtChuan);
-//                    String maKH;
-//
-//                    if (kh == null) {
-//                        maKH = tool.taoKhoaChinh("KH");
-//                        KhachHang khMoi = new KhachHang();
-//                        khMoi.setMaKH(maKH);
-//                        khMoi.setTenKH(tenKH);
-//                        khMoi.setTuoi(tuoiKH);
-//                        khMoi.setSdt(sdtChuan);
-//                        boolean themKH = khService.themKhachHang(khMoi);
-//                        if (!themKH) {
-//                            SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi", "Không thể thêm khách hàng mới!", false));
-//                            return;
-//                        }
-//                    } else {
-//                        maKH = kh.getMaKH();
-//                    }
-//
-//                    LocalDate localNgayDat = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//                    LocalDate localNgayHen = (ngayHenUtil != null) ? ngayHenUtil.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
-//
-//                    List<Object[]> dsChiTiet = new ArrayList<>();
-//                    for (Object[] row : rowDataList) {
-//                        String tenDVT = (String) row[2];
-//                        String maDVT = dvtService.timMaDVTTheoTen(tenDVT); // Gọi Server
-//                        if (maDVT == null) {
-//                            SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Chi tiết phiếu đặt", "Đơn vị tính '" + tenDVT + "' không hợp lệ!", false));
-//                            return;
-//                        }
-//                        dsChiTiet.add(new Object[] { row[0], row[1], maDVT, row[3] });
-//                    }
-//
-//                    int ketQua = pdhService.taoPhieuDatHangVaChiTiet(maPDH, maKH, maNV, localNgayDat, localNgayHen, ghiChu, dsChiTiet);
-//
-//                    // 3. Cập nhật UI dựa trên kết quả
-//                    SwingUtilities.invokeLater(() -> {
-//                        switch (ketQua) {
-//                            case 1:
-//                                tool.hienThiThongBao("Thêm phiếu đặt thuốc", "Thêm phiếu đặt thuốc thành công!", true);
-//
-//                                // Tải phiếu mới và chuyển Form phải chạy ngầm tiếp để tránh đơ
-//                                new Thread(() -> {
-//                                    PhieuDatHang pdh = pdhService.timTheoMa(maPDH);
-//                                    SwingUtilities.invokeLater(() -> {
-//                                        if (pdh == null) {
-//                                            tool.hienThiThongBao("Lỗi", "Không tìm thấy thông tin phiếu đặt!", false);
-//                                            return;
-//                                        }
-//                                        ChiTietPhieuDatHang_GUI chiTiet;
-//                                        if (lpdhGUI.getTrangChuQL() != null) {
-//                                            chiTiet = new ChiTietPhieuDatHang_GUI(lpdhGUI.getTrangChuQL(), pdh);
-//                                            lpdhGUI.getTrangChuQL().setUpNoiDung(chiTiet);
-//                                        } else {
-//                                            chiTiet = new ChiTietPhieuDatHang_GUI(lpdhGUI.getTrangChuNV(), pdh);
-//                                            lpdhGUI.getTrangChuNV().setUpNoiDung(chiTiet);
-//                                        }
-//                                        lamMoi();
-//                                    });
-//                                }).start();
-//                                break;
-//                            case 0:
-//                                tool.hienThiThongBao("Thêm phiếu đặt thuốc", "Không đủ tồn kho cho thuốc trong bảng!", false);
-//                                break;
-//                            case -1:
-//                            default:
-//                                tool.hienThiThongBao("Thêm phiếu đặt thuốc", "Đã xảy ra lỗi khi thêm phiếu đặt!", false);
-//                                break;
-//                        }
-//                    });
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }).start();
-//        }
-//    }
+    public void taoPhieuDat() {
+        if (ktSoDienThoaiHopLe() && ktTenKhachHangHopLe() && ktTuoiHopLe()) {
+
+            // 1. Thu thập tất cả dữ liệu từ UI trên luồng chính
+            String sdtChuan = tool.chuyenSoDienThoai(lpdhGUI.txtSdt.getText());
+            String tenKH = lpdhGUI.txtTenKH.getText().trim();
+            int tuoiKH = Integer.parseInt(lpdhGUI.txtTuoi.getText().trim());
+            String ghiChu = lpdhGUI.txaGhiChu.getText().trim();
+            Date ngayHenUtil = lpdhGUI.ngayHen.getDate();
+
+            NhanVien nvDangNhap = null;
+            if (lpdhGUI.getTrangChuQL() != null) nvDangNhap = lpdhGUI.getTrangChuQL().layNhanVien();
+            else if (lpdhGUI.getTrangChuNV() != null) nvDangNhap = lpdhGUI.getTrangChuNV().layNhanVien();
+            String maNV = nvDangNhap.getMaNV();
+
+            DefaultTableModel model = (DefaultTableModel) lpdhGUI.tblThuoc.getModel();
+            if (model.getRowCount() == 0) {
+                tool.hienThiThongBao("Lỗi", "Danh sách thuốc trống!", false);
+                return;
+            }
+
+            // Trích xuất dữ liệu bảng thành list Object[] tạm thời
+            List<Object[]> rowDataList = new ArrayList<>();
+            for (int i = 0; i < model.getRowCount(); i++) {
+                String maThuoc = model.getValueAt(i, 0).toString();
+                int soLuong = Integer.parseInt(model.getValueAt(i, 4).toString());
+                String tenDVT = model.getValueAt(i, 5).toString();
+                double donGia = tool.chuyenTienSangSo(model.getValueAt(i, 6).toString());
+                rowDataList.add(new Object[]{maThuoc, soLuong, tenDVT, donGia});
+            }
+
+            // 2. Chạy tiến trình xử lý Network (DB) trên Thread nền
+            new Thread(() -> {
+                try {
+                    String maPDH = tool.taoKhoaChinh("PDH");
+                    KhachHang kh = khService.timKhachHangTheoSDT(sdtChuan);
+                    String maKH;
+
+                    if (kh == null) {
+                        maKH = tool.taoKhoaChinh("KH");
+                        KhachHang khMoi = new KhachHang();
+                        khMoi.setMaKH(maKH);
+                        khMoi.setTenKH(tenKH);
+                        khMoi.setTuoi(tuoiKH);
+                        khMoi.setSdt(sdtChuan);
+                        boolean themKH = khService.themKhachHang(khMoi);
+                        if (!themKH) {
+                            SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi", "Không thể thêm khách hàng mới!", false));
+                            return;
+                        }
+                    } else {
+                        maKH = kh.getMaKH();
+                    }
+
+                    LocalDate localNgayDat = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate localNgayHen = (ngayHenUtil != null) ? ngayHenUtil.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
+
+                    List<Object[]> dsChiTiet = new ArrayList<>();
+                    for (Object[] row : rowDataList) {
+                        String tenDVT = (String) row[2];
+                        String maDVT = dvtService.timMaDVTTheoTen(tenDVT); // Gọi Server
+                        if (maDVT == null) {
+                            SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Chi tiết phiếu đặt", "Đơn vị tính '" + tenDVT + "' không hợp lệ!", false));
+                            return;
+                        }
+                        dsChiTiet.add(new Object[] { row[0], row[1], maDVT, row[3] });
+                    }
+
+                    int ketQua = pdhService.taoPhieuDatHangVaChiTiet(maPDH, maKH, maNV, localNgayDat, localNgayHen, ghiChu, dsChiTiet);
+
+                    // 3. Cập nhật UI dựa trên kết quả
+                    SwingUtilities.invokeLater(() -> {
+                        switch (ketQua) {
+                            case 1:
+                                tool.hienThiThongBao("Thêm phiếu đặt thuốc", "Thêm phiếu đặt thuốc thành công!", true);
+
+                                // Tải phiếu mới và chuyển Form phải chạy ngầm tiếp để tránh đơ
+                                new Thread(() -> {
+                                    PhieuDatHang pdh = pdhService.timTheoMa(maPDH);
+                                    SwingUtilities.invokeLater(() -> {
+                                        if (pdh == null) {
+                                            tool.hienThiThongBao("Lỗi", "Không tìm thấy thông tin phiếu đặt!", false);
+                                            return;
+                                        }
+                                        ChiTietPhieuDatHang_GUI chiTiet;
+                                        if (lpdhGUI.getTrangChuQL() != null) {
+                                            chiTiet = new ChiTietPhieuDatHang_GUI(lpdhGUI.getTrangChuQL(), pdh);
+                                            lpdhGUI.getTrangChuQL().setUpNoiDung(chiTiet);
+                                        } else {
+                                            chiTiet = new ChiTietPhieuDatHang_GUI(lpdhGUI.getTrangChuNV(), pdh);
+                                            lpdhGUI.getTrangChuNV().setUpNoiDung(chiTiet);
+                                        }
+                                        lamMoi();
+                                    });
+                                }).start();
+                                break;
+                            case 0:
+                                tool.hienThiThongBao("Thêm phiếu đặt thuốc", "Không đủ tồn kho cho thuốc trong bảng!", false);
+                                break;
+                            case -1:
+                            default:
+                                tool.hienThiThongBao("Thêm phiếu đặt thuốc", "Đã xảy ra lỗi khi thêm phiếu đặt!", false);
+                                break;
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+    }
 
     public void xoaThuoc() {
         int selectedRow = lpdhGUI.tblThuoc.getSelectedRow();
@@ -279,146 +287,164 @@ public class LapPhieuDatHangController {
         return Normalizer.normalize(s, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase().trim();
     }
 
-//    public void themVaoTable() {
-//        String sdt = lpdhGUI.txtSdt.getText().trim();
-//        String tenKH = lpdhGUI.txtTenKH.getText().trim();
-//        String tuoiStr = lpdhGUI.txtTuoi.getText().trim();
-//        String tenThuoc = (String) lpdhGUI.cmbSanPham.getSelectedItem();
-//        String donVi = (String) lpdhGUI.cmbDonVi.getSelectedItem();
-//        String soLuongStr = lpdhGUI.txtSoLuong.getText().trim();
-//        String tenQG = (String) lpdhGUI.getCmbQuocGia().getSelectedItem();
-//        java.util.Date ngayUtil = lpdhGUI.ngayHen.getDate();
-//
-//        if (sdt.isEmpty() || tenKH.isEmpty() || tuoiStr.isEmpty() || tenThuoc == null || tenThuoc.isEmpty()
-//                || donVi == null || donVi.isEmpty() || soLuongStr.isEmpty() || ngayUtil == null) {
-//            tool.hienThiThongBao("Lỗi nhập liệu", "Vui lòng nhập đầy đủ thông tin trước khi thêm!", false);
-//            return;
-//        }
-//
-//        int tuoi, soLuongNhap;
-//        try {
-//            tuoi = Integer.parseInt(tuoiStr);
-//            if (tuoi <= 0 || tuoi > 120) throw new NumberFormatException();
-//        } catch (NumberFormatException e) {
-//            tool.hienThiThongBao("Lỗi dữ liệu", "Tuổi phải là số nguyên hợp lệ (1–120)!", false);
-//            return;
-//        }
-//
-//        try {
-//            soLuongNhap = Integer.parseInt(soLuongStr);
-//            if (soLuongNhap <= 0) throw new NumberFormatException();
-//        } catch (NumberFormatException e) {
-//            tool.hienThiThongBao("Lỗi dữ liệu", "Số lượng phải là số nguyên dương!", false);
-//            return;
-//        }
-//
-//        LocalDate ngayHen = ngayUtil.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//        if (ngayHen.isBefore(LocalDate.now())) {
-//            tool.hienThiThongBao("Lỗi ngày hẹn", "Ngày hẹn phải là hôm nay hoặc sau hôm nay!", false);
-//            return;
-//        }
-//
-//        // Lấy thông tin hiện tại của bảng trên EDT để tránh lỗi xung đột luồng
-//        DefaultTableModel model = (DefaultTableModel) lpdhGUI.tblThuoc.getModel();
-//        final List<Object[]> currentTableData = new ArrayList<>();
-//        for (int i = 0; i < model.getRowCount(); i++) {
-//            currentTableData.add(new Object[]{model.getValueAt(i, 0).toString(), Integer.parseInt(model.getValueAt(i, 4).toString()), model.getValueAt(i, 7).toString()});
-//        }
-//
-//        // 2. Chạy Thread lấy dữ liệu Server (Tồn kho, Khuyến mãi...)
-//        new Thread(() -> {
-//            String maThuoc = thService.layMaThuocTheoTenVaQG(tenThuoc, tenQG);
-//            Thuoc thuoc = thService.timThuocTheoMa(maThuoc);
-//
-//            if (thuoc == null) {
-//                SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi", "Không tìm thấy thông tin thuốc!", false));
-//                return;
-//            }
-//
-//            int slHienTaiTrenBang = 0;
-//            int rowIndex = -1;
-//            for (int i = 0; i < currentTableData.size(); i++) {
-//                if (currentTableData.get(i)[0].equals(maThuoc)) {
-//                    slHienTaiTrenBang = (int) currentTableData.get(i)[1];
-//                    rowIndex = i;
-//                    break;
-//                }
-//            }
-//
-//            int tonKho = thService.laySoLuongTon(maThuoc);
-//            if (soLuongNhap + slHienTaiTrenBang > tonKho) {
-//                final int stTonKho = tonKho;
-//                final int stSlHienTai = slHienTaiTrenBang;
-//                SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi",
-//                        "Tồn kho không đủ! (Tồn: " + stTonKho + ", Đang có trong bảng: " + stSlHienTai + ")", false));
-//                return;
-//            }
-//
-//            double donGiaGoc = thuoc.getGiaBan();
-//            double donGiaHienThi = donGiaGoc;
-//            double thanhTien = 0;
-//            int soLuongThucTe = soLuongNhap;
-//            String moTaKM = "Không có";
-//            String maKM = thService.layMaKMTheoMaThuoc(maThuoc);
-//            LocalDate homNay = LocalDate.now();
-//
-//            if (maKM != null && !maKM.isEmpty()) {
-//                KhuyenMai km = kmService.layKhuyenMaiTheoMa(maKM);
-//                if (km != null && !homNay.isBefore(km.getNgayBD()) && !homNay.isAfter(km.getNgayKT())) {
-//                    String loaiKM = km.getLoaiKM().toLowerCase();
-//                    if (loaiKM.equals("giảm giá")) {
-//                        double mucGiam = km.getMucKM();
-//                        donGiaHienThi = donGiaGoc * (1 - mucGiam / 100.0);
-//                        thanhTien = donGiaHienThi * soLuongNhap;
-//                        moTaKM = "Giảm " + mucGiam + "%";
-//                    } else if (loaiKM.equals("mua tặng")) {
-//                        int soLuongTang = (soLuongNhap / km.getSoLuongMua()) * km.getSoLuongTang();
-//                        if (soLuongTang > 0) {
-//                            soLuongThucTe = soLuongNhap + soLuongTang;
-//                            thanhTien = donGiaGoc * soLuongNhap;
-//                            moTaKM = String.format("Mua %d tặng %d (Tặng: %d)", km.getSoLuongMua(), km.getSoLuongTang(), soLuongTang);
-//                        } else {
-//                            thanhTien = donGiaGoc * soLuongNhap;
-//                        }
-//                    } else {
-//                        thanhTien = donGiaGoc * soLuongNhap;
-//                    }
-//                } else {
-//                    thanhTien = donGiaGoc * soLuongNhap;
-//                }
-//            } else {
-//                thanhTien = donGiaGoc * soLuongNhap;
-//            }
-//
-//            final int finalRowIndex = rowIndex;
-//            final int finalSlMoi = slHienTaiTrenBang + soLuongThucTe;
-//            final double finalThanhTien = thanhTien;
-//            final double finalDonGiaHienThi = donGiaHienThi;
-//            final String finalMoTaKM = moTaKM;
-//            final int finalSoLuongThucTe = soLuongThucTe;
-//
-//            // 3. Cập nhật giao diện an toàn
-//            SwingUtilities.invokeLater(() -> {
-//                if (finalRowIndex != -1) {
-//                    double thanhTienCu = tool.chuyenTienSangSo(currentTableData.get(finalRowIndex)[2].toString());
-//                    model.setValueAt(finalSlMoi, finalRowIndex, 4);
-//                    model.setValueAt(tool.dinhDangVND(finalDonGiaHienThi), finalRowIndex, 6);
-//                    model.setValueAt(tool.dinhDangVND(thanhTienCu + finalThanhTien), finalRowIndex, 7);
-//                    if (!finalMoTaKM.equals("Không có")) {
-//                        model.setValueAt(finalMoTaKM, finalRowIndex, 8);
-//                    }
-//                } else {
-//                    int stt = model.getRowCount() + 1;
-//                    Object[] row = { maThuoc, stt, tenThuoc, tenQG, finalSoLuongThucTe, donVi, tool.dinhDangVND(finalDonGiaHienThi),
-//                            tool.dinhDangVND(finalThanhTien), finalMoTaKM };
-//                    model.addRow(row);
-//                }
-//                lpdhGUI.cmbSanPham.setSelectedIndex(-1);
-//                lpdhGUI.cmbDonVi.setSelectedIndex(-1);
-//                lpdhGUI.txtSoLuong.setText("");
-//            });
-//        }).start();
-//    }
+    public void themVaoTable() {
+        String sdt = lpdhGUI.txtSdt.getText().trim();
+        String tenKH = lpdhGUI.txtTenKH.getText().trim();
+        String tuoiStr = lpdhGUI.txtTuoi.getText().trim();
+        String tenThuoc = (String) lpdhGUI.cmbSanPham.getSelectedItem();
+        String donVi = (String) lpdhGUI.cmbDonVi.getSelectedItem();
+        String soLuongStr = lpdhGUI.txtSoLuong.getText().trim();
+        String tenQG = (String) lpdhGUI.getCmbQuocGia().getSelectedItem();
+        java.util.Date ngayUtil = lpdhGUI.ngayHen.getDate();
+
+        if (sdt.isEmpty() || tenKH.isEmpty() || tuoiStr.isEmpty() || tenThuoc == null || tenThuoc.isEmpty()
+                || donVi == null || donVi.isEmpty() || soLuongStr.isEmpty() || ngayUtil == null) {
+            tool.hienThiThongBao("Lỗi nhập liệu", "Vui lòng nhập đầy đủ thông tin trước khi thêm!", false);
+            return;
+        }
+
+        int tuoi, soLuongNhap;
+        try {
+            tuoi = Integer.parseInt(tuoiStr);
+            if (tuoi <= 0 || tuoi > 120) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            tool.hienThiThongBao("Lỗi dữ liệu", "Tuổi phải là số nguyên hợp lệ (1–120)!", false);
+            return;
+        }
+
+        try {
+            soLuongNhap = Integer.parseInt(soLuongStr);
+            if (soLuongNhap <= 0) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            tool.hienThiThongBao("Lỗi dữ liệu", "Số lượng phải là số nguyên dương!", false);
+            return;
+        }
+
+        LocalDate ngayHen = ngayUtil.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (ngayHen.isBefore(LocalDate.now())) {
+            tool.hienThiThongBao("Lỗi ngày hẹn", "Ngày hẹn phải là hôm nay hoặc sau hôm nay!", false);
+            return;
+        }
+
+        // Lấy thông tin hiện tại của bảng trên EDT để tránh lỗi xung đột luồng
+        DefaultTableModel model = (DefaultTableModel) lpdhGUI.tblThuoc.getModel();
+        final List<Object[]> currentTableData = new ArrayList<>();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            // Lấy [Mã Thuốc: Cột 0], [Số lượng: Cột 4], [Thành tiền: Cột 7]
+            currentTableData.add(new Object[]{model.getValueAt(i, 0).toString(), Integer.parseInt(model.getValueAt(i, 4).toString()), model.getValueAt(i, 7).toString()});
+        }
+
+        // 2. Chạy Thread lấy dữ liệu Server (Tồn kho, Khuyến mãi...)
+        new Thread(() -> {
+            String maThuoc = thService.layMaThuocTheoTenVaQG(tenThuoc, tenQG);
+            Thuoc thuoc = thService.timThuocTheoMa(maThuoc);
+
+            if (thuoc == null) {
+                SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi", "Không tìm thấy thông tin thuốc!", false));
+                return;
+            }
+
+            int slHienTaiTrenBang = 0;
+            int rowIndex = -1;
+            for (int i = 0; i < currentTableData.size(); i++) {
+                if (currentTableData.get(i)[0].equals(maThuoc)) {
+                    slHienTaiTrenBang = (int) currentTableData.get(i)[1];
+                    rowIndex = i;
+                    break;
+                }
+            }
+
+            int tonKho = thService.laySoLuongTon(maThuoc);
+            if (soLuongNhap + slHienTaiTrenBang > tonKho) {
+                final int stTonKho = tonKho;
+                final int stSlHienTai = slHienTaiTrenBang;
+                SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi",
+                        "Tồn kho không đủ! (Tồn: " + stTonKho + ", Đang có trong bảng: " + stSlHienTai + ")", false));
+                return;
+            }
+
+            double donGiaGoc = thuoc.getGiaBan();
+            double donGiaHienThi = donGiaGoc;
+            double thanhTien = 0;
+            int soLuongThucTe = soLuongNhap;
+            String moTaKM = "Không có";
+            String maKM = thService.layMaKMTheoMaThuoc(maThuoc);
+            LocalDate homNay = LocalDate.now();
+
+            if (maKM != null && !maKM.isEmpty()) {
+                KhuyenMai km = null;
+                try {
+                    km = kmService.layKhuyenMaiTheoMa(maKM);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                if (km != null && !homNay.isBefore(km.getNgayBD()) && !homNay.isAfter(km.getNgayKT())) {
+                    String loaiKM = km.getLoaiKM().toLowerCase();
+                    if (loaiKM.equals("giảm giá")) {
+                        double mucGiam = km.getMucKM();
+                        donGiaHienThi = donGiaGoc * (1 - mucGiam / 100.0);
+                        thanhTien = donGiaHienThi * soLuongNhap;
+                        moTaKM = "Giảm " + mucGiam + "%";
+                    } else if (loaiKM.equals("mua tặng")) {
+                        int soLuongTang = (soLuongNhap / km.getSoLuongMua()) * km.getSoLuongTang();
+                        if (soLuongTang > 0) {
+                            soLuongThucTe = soLuongNhap + soLuongTang;
+                            thanhTien = donGiaGoc * soLuongNhap;
+                            moTaKM = String.format("Mua %d tặng %d (Tặng: %d)", km.getSoLuongMua(), km.getSoLuongTang(), soLuongTang);
+                        } else {
+                            thanhTien = donGiaGoc * soLuongNhap;
+                        }
+                    } else {
+                        thanhTien = donGiaGoc * soLuongNhap;
+                    }
+                } else {
+                    thanhTien = donGiaGoc * soLuongNhap;
+                }
+            } else {
+                thanhTien = donGiaGoc * soLuongNhap;
+            }
+
+            final int finalRowIndex = rowIndex;
+            final int finalSlMoi = slHienTaiTrenBang + soLuongThucTe;
+            final double finalThanhTien = thanhTien;
+            final double finalDonGiaHienThi = donGiaHienThi;
+            final String finalMoTaKM = moTaKM;
+            final int finalSoLuongThucTe = soLuongThucTe;
+
+            // 3. Cập nhật giao diện an toàn
+            SwingUtilities.invokeLater(() -> {
+                if (finalRowIndex != -1) {
+                    double thanhTienCu = tool.chuyenTienSangSo(currentTableData.get(finalRowIndex)[2].toString());
+
+                    // SỬA CỘT CẬP NHẬT: Số lượng (4), Thành tiền (7)
+                    model.setValueAt(finalSlMoi, finalRowIndex, 4);
+                    // Giá trị Đơn giá không cần set lại vì không đổi
+                    model.setValueAt(tool.dinhDangVND(thanhTienCu + finalThanhTien), finalRowIndex, 7);
+                    if (!finalMoTaKM.equals("Không có")) {
+                        model.setValueAt(finalMoTaKM, finalRowIndex, 8);
+                    }
+                } else {
+                    int stt = model.getRowCount() + 1;
+                    // SỬA CỘT THÊM MỚI (9 CỘT):
+                    Object[] row = {
+                            maThuoc, // 0
+                            stt, // 1
+                            tenThuoc, // 2
+                            tenQG, // 3
+                            finalSoLuongThucTe, // 4
+                            donVi, // 5
+                            tool.dinhDangVND(finalDonGiaHienThi), // 6
+                            tool.dinhDangVND(finalThanhTien), // 7
+                            finalMoTaKM // 8
+                    };
+                    model.addRow(row);
+                }
+                lpdhGUI.cmbSanPham.setSelectedIndex(-1);
+                lpdhGUI.cmbDonVi.setSelectedIndex(-1);
+                lpdhGUI.txtSoLuong.setText("");
+            });
+        }).start();
+    }
 
     public void setUpGoiY() {
         batGoiYChoTextField(lpdhGUI.txtSdt, listKH, kh -> {
@@ -443,37 +469,37 @@ public class LapPhieuDatHangController {
             }
         }
 
-//        lpdhGUI.cmbSanPham.addActionListener(e -> {
-//            String tenThuoc = (String) lpdhGUI.cmbSanPham.getSelectedItem();
-//
-//            if (tenThuoc == null || tenThuoc.isEmpty()) {
-//                lpdhGUI.cmbDonVi.setSelectedIndex(-1);
-//                lpdhGUI.getCmbQuocGia().removeAllItems();
-//                return;
-//            }
-//
-//            // Gọi mạng khi select thay đổi => Phải dùng Thread
-//            new Thread(() -> {
-//                String maThuoc = thService.layMaThuocTheoTen(tenThuoc);
-//                if (maThuoc == null) return;
-//
-//                String donVi = thService.layTenDonViTinhTheoMaThuoc(maThuoc);
-//                ArrayList<QuocGia> listQG = thService.layListQuocGiaTheoThuoc(tenThuoc);
-//
-//                SwingUtilities.invokeLater(() -> {
-//                    if (donVi != null) lpdhGUI.cmbDonVi.setSelectedItem(donVi);
-//                    lpdhGUI.getCmbQuocGia().removeAllItems();
-//                    if (listQG != null) {
-//                        for (QuocGia qg : listQG) {
-//                            lpdhGUI.getCmbQuocGia().addItem(qg.getTenQuocGia());
-//                        }
-//                    }
-//                    if (lpdhGUI.getCmbQuocGia().getItemCount() > 0) {
-//                        lpdhGUI.cmbQuocGia.setSelectedIndex(0);
-//                    }
-//                });
-//            }).start();
-//        });
+        lpdhGUI.cmbSanPham.addActionListener(e -> {
+            String tenThuoc = (String) lpdhGUI.cmbSanPham.getSelectedItem();
+
+            if (tenThuoc == null || tenThuoc.isEmpty()) {
+                lpdhGUI.cmbDonVi.setSelectedIndex(-1);
+                lpdhGUI.getCmbQuocGia().removeAllItems();
+                return;
+            }
+
+            // Gọi mạng khi select thay đổi => Phải dùng Thread
+            new Thread(() -> {
+                String maThuoc = thService.layMaThuocTheoTen(tenThuoc);
+                if (maThuoc == null) return;
+
+                String donVi = thService.layTenDonViTinhTheoMaThuoc(maThuoc);
+                ArrayList<QuocGia> listQG = thService.layListQuocGiaTheoThuoc(tenThuoc);
+
+                SwingUtilities.invokeLater(() -> {
+                    if (donVi != null) lpdhGUI.cmbDonVi.setSelectedItem(donVi);
+                    lpdhGUI.getCmbQuocGia().removeAllItems();
+                    if (listQG != null) {
+                        for (QuocGia qg : listQG) {
+                            lpdhGUI.getCmbQuocGia().addItem(qg.getTenQuocGia());
+                        }
+                    }
+                    if (lpdhGUI.getCmbQuocGia().getItemCount() > 0) {
+                        lpdhGUI.cmbQuocGia.setSelectedIndex(0);
+                    }
+                });
+            }).start();
+        });
     }
 
     public void lamMoi() {

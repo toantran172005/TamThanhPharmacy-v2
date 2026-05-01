@@ -3,13 +3,13 @@ package controller;
 import entity.*;
 //import service.DonViTinhService;
 //import service.HoaDonService;
+import gui.*;
+import service.DonViTinhService;
+import service.HoaDonService;
 import service.PhieuDoiTraService;
 //import service.ThuocService;
-import gui.ChiTietPhieuDoiTra_GUI;
-import gui.LapPhieuDoiTra_GUI;
 //import gui.TimKiemHD_GUI;
-import gui.TrangChuQL_GUI;
-import gui.TrangChuNV_GUI;
+import service.ThuocService;
 import utils.ToolCtrl;
 
 import javax.swing.*;
@@ -20,11 +20,11 @@ import java.util.List;
 
 public class LapPhieuDoiTraController {
     public LapPhieuDoiTra_GUI gui;
-//    public HoaDonService hdService = new HoaDonService();
+    public HoaDonService hdService = new HoaDonService();
     public PhieuDoiTraService pdtService = new PhieuDoiTraService();
     public ToolCtrl tool = new ToolCtrl();
-//    public DonViTinhService dvtService = new DonViTinhService();
-//    public ThuocService thuocService = new ThuocService();
+    public DonViTinhService dvtService = new DonViTinhService();
+    public ThuocService thuocService = new ThuocService();
 
     public LapPhieuDoiTra_GUI getGui() {
         return gui;
@@ -61,41 +61,41 @@ public class LapPhieuDoiTraController {
     public void setMaHD(String maHD) {
         this.maHD = maHD;
         gui.getLblMaHD().setText(maHD);
-//        taiDuLieuHoaDon(maHD);
+        taiDuLieuHoaDon(maHD);
         tinhTongTienHoan();
     }
 
     // ========== LẤY DỮ LIỆU TỪ HOÁ ĐƠN ==========
-//    public void taiDuLieuHoaDon(String maHD) {
-//        new Thread(() -> {
-//            HoaDon hd = hdService.timHoaDonTheoMa(maHD); // Gọi Server
-//            String tenKH = (hd != null && hd.getKhachHang() != null) ? hd.getKhachHang().getTenKH() : "Khách lẻ";
-//
-//            SwingUtilities.invokeLater(() -> {
-//                gui.getLblKhachHang().setText(tenKH);
-//                capNhatBangThuocDaMua(maHD);
-//            });
-//        }).start();
-//    }
+    public void taiDuLieuHoaDon(String maHD) {
+        new Thread(() -> {
+            HoaDon hd = hdService.timHoaDonTheoMa(maHD); // Gọi Server
+            String tenKH = (hd != null && hd.getKhachHang() != null) ? hd.getKhachHang().getTenKH() : "Khách lẻ";
+
+            SwingUtilities.invokeLater(() -> {
+                gui.getLblKhachHang().setText(tenKH);
+                capNhatBangThuocDaMua(maHD);
+            });
+        }).start();
+    }
 
     // ========== ĐƯA NHỮNG THUỐC ĐÃ MUA LÊN BẢNG ==========
     public void capNhatBangThuocDaMua(String maHD) {
         new Thread(() -> {
-//            List<Object[]> chiTietList = hdService.layChiTietHoaDon(maHD);
+            List<Object[]> chiTietList = hdService.layChiTietHoaDon(maHD);
             List<Object[]> tableData = new ArrayList<>();
 
-//            for (Object[] ct : chiTietList) {
-//                String noiSanXuat = thuocService.timTenQGTheoMaThuoc(ct[1].toString());
-//                tableData.add(new Object[] {
-//                        ct[1], // maThuoc
-//                        ct[2], // tenThuoc
-//                        noiSanXuat,
-//                        ct[3], // soLuong
-//                        ct[5], // donVi
-//                        tool.dinhDangVND(ct[6] instanceof Number ? ((Number) ct[6]).doubleValue() : 0),
-//                        tool.dinhDangVND(ct[7] instanceof Number ? ((Number) ct[7]).doubleValue() : 0)
-//                });
-//            }
+            for (Object[] ct : chiTietList) {
+                String noiSanXuat = thuocService.timTenQGTheoMaThuoc(ct[1].toString());
+                tableData.add(new Object[] {
+                        ct[1], // maThuoc
+                        ct[2], // tenThuoc
+                        noiSanXuat,
+                        ct[3], // soLuong
+                        ct[5], // donVi
+                        tool.dinhDangVND(ct[6] instanceof Number ? ((Number) ct[6]).doubleValue() : 0),
+                        tool.dinhDangVND(ct[7] instanceof Number ? ((Number) ct[7]).doubleValue() : 0)
+                });
+            }
 
             SwingUtilities.invokeLater(() -> {
                 DefaultTableModel model = (DefaultTableModel) gui.getTblHDThuoc().getModel();
@@ -151,15 +151,15 @@ public class LapPhieuDoiTraController {
         String tenThuocTrongBang = tblHD.getValueAt(row, 2).toString();
 
         new Thread(() -> {
-//            String maDVT = dvtService.timMaDVTTheoTen(tenDVT);
-//            int daDoiTra = pdtService.tongSoLuongDaDoiTra(maHD, maThuoc, maDVT);
-//            int soLuongConLai = slMua - daDoiTra;
-//
-//            if (soLuong > soLuongConLai) {
-//                SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi", "Số lượng đổi trả vượt quá số lượng còn lại!\n"
-//                        + "Đã mua: " + slMua + " | Đã đổi trả: " + daDoiTra + " | Còn lại: " + soLuongConLai, false));
-//                return;
-//            }
+            String maDVT = dvtService.timMaDVTTheoTen(tenDVT);
+            int daDoiTra = pdtService.tongSoLuongDaDoiTra(maHD, maThuoc, maDVT);
+            int soLuongConLai = slMua - daDoiTra;
+
+            if (soLuong > soLuongConLai) {
+                SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi", "Số lượng đổi trả vượt quá số lượng còn lại!\n"
+                        + "Đã mua: " + slMua + " | Đã đổi trả: " + daDoiTra + " | Còn lại: " + soLuongConLai, false));
+                return;
+            }
 
             double thanhTien = tool.chuyenTienSangSo(thanhTienStr);
             double donGia = thanhTien / slMua;
@@ -280,15 +280,15 @@ public class LapPhieuDoiTraController {
 
         // Mở Thread xử lý DB, cập nhật kho
         new Thread(() -> {
-//            HoaDon hd = hdService.timHoaDonTheoMa(maHD);
-//            if (hd == null) {
-//                SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi", "Không tìm thấy hóa đơn!", false));
-//                return;
-//            }
+            HoaDon hd = hdService.timHoaDonTheoMa(maHD);
+            if (hd == null) {
+                SwingUtilities.invokeLater(() -> tool.hienThiThongBao("Lỗi", "Không tìm thấy hóa đơn!", false));
+                return;
+            }
 
             PhieuDoiTra pdt = new PhieuDoiTra();
             pdt.setMaPhieuDT(tool.taoKhoaChinh("PDT"));
-//            pdt.setHoaDon(hd);
+            pdt.setHoaDon(hd);
             pdt.setNhanVien(finalNvDangNhap);
             pdt.setNgayDoiTra(LocalDate.now());
             pdt.setLyDo(lyDo);
@@ -308,14 +308,14 @@ public class LapPhieuDoiTraController {
                 if (maThuoc == null) continue;
 
                 String tenDVT = rowDT[1].toString();
-//                String maDVT = dvtService.timMaDVTTheoTen(tenDVT);
+                String maDVT = dvtService.timMaDVTTheoTen(tenDVT);
 
                 CTPhieuDoiTra chiTiet = new CTPhieuDoiTra();
                 chiTiet.setPhieuDoiTra(pdt);
-//                chiTiet.setThuoc(thuocService.timThuocTheoMa(maThuoc));
+                chiTiet.setThuoc(thuocService.timThuocTheoMa(maThuoc));
 
                 DonViTinh donViTinh = new DonViTinh();
-//                donViTinh.setMaDVT(maDVT);
+                donViTinh.setMaDVT(maDVT);
                 chiTiet.setDonViTinh(donViTinh);
 
                 chiTiet.setSoLuong(Integer.parseInt(rowDT[2].toString()));
@@ -344,11 +344,11 @@ public class LapPhieuDoiTraController {
                         break;
                     }
                 }
-//                if (maThuoc != null) {
-//                    String maDVT = dvtService.timMaDVTTheoTen(rowDT[1].toString());
-//                    int soLuongTra = Integer.parseInt(rowDT[2].toString());
-//                    thuocService.capNhatSoLuongTon(maThuoc, maDVT, soLuongTra, true);
-//                }
+                if (maThuoc != null) {
+                    String maDVT = dvtService.timMaDVTTheoTen(rowDT[1].toString());
+                    int soLuongTra = Integer.parseInt(rowDT[2].toString());
+                    thuocService.capNhatSoLuongTon(maThuoc, maDVT, soLuongTra, true);
+                }
             }
 
             PhieuDoiTra pdtHoanChinh = pdtService.timPhieuDoiTraTheoMa(pdt.getMaPhieuDT());
@@ -378,9 +378,9 @@ public class LapPhieuDoiTraController {
         new Thread(() -> {
             SwingUtilities.invokeLater(() -> {
                 if (gui.getTrangChuQL() != null) {
-//                    tool.doiPanel(gui, new TimKiemHD_GUI(gui.getTrangChuQL()));
+                    tool.doiPanel(gui, new TimKiemHD_GUI(gui.getTrangChuQL()));
                 } else if (gui.getTrangChuNV() != null) {
-//                    tool.doiPanel(gui, new TimKiemHD_GUI(gui.getTrangChuNV()));
+                    tool.doiPanel(gui, new TimKiemHD_GUI(gui.getTrangChuNV()));
                 }
             });
         }).start();

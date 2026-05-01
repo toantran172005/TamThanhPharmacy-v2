@@ -18,6 +18,7 @@ import entity.PhieuDatHang;
 import service.KhuyenMaiService;
 import service.PhieuDatHangService;
 //import service.ThuocService;
+import service.ThuocService;
 import utils.ToolCtrl;
 
 import java.awt.*;
@@ -38,7 +39,7 @@ public class ChiTietPhieuDatHang_GUI extends JPanel {
 
 	// NÂNG CẤP: Dùng Service thay vì DAO
 	public PhieuDatHangService pdhService = new PhieuDatHangService();
-//	public ThuocService thService = new ThuocService();
+	public ThuocService thService = new ThuocService();
 	public KhuyenMaiService kmService = new KhuyenMaiService();
 	Font font1 = new Font("Time New Roman", Font.BOLD, 18);
 	Font font2 = new Font("Time New Roman", Font.PLAIN, 15);
@@ -118,7 +119,7 @@ public class ChiTietPhieuDatHang_GUI extends JPanel {
 
 			String maThuoc = row[1].toString();
 			String tenThuoc = row[2].toString();
-//			String noiSanXuat = thService.timTenQGTheoMaThuoc(maThuoc);
+			String noiSanXuat = thService.timTenQGTheoMaThuoc(maThuoc);
 			int soLuong = Integer.parseInt(row[3].toString());
 			String tenDVT = row[5].toString();
 			double donGia = (double) row[6];
@@ -127,31 +128,36 @@ public class ChiTietPhieuDatHang_GUI extends JPanel {
 
 			double mucGiam;
 			String moTaKM = "Không có KM";
-//			String maKM = thService.layMaKMTheoMaThuoc(maThuoc);
+			String maKM = thService.layMaKMTheoMaThuoc(maThuoc);
 			LocalDate homNay = LocalDate.now();
 
-//			if (maKM != null && !maKM.isEmpty()) {
-//				KhuyenMai km = kmService.layKhuyenMaiTheoMa(maKM);
-//				if (km != null && !homNay.isBefore(km.getNgayBD()) && !homNay.isAfter(km.getNgayKT())) {
-//					switch (km.getLoaiKM().toLowerCase()) {
-//					case "giảm giá":
-//						mucGiam = (double) km.getMucKM();
-//						moTaKM = "Giảm " + mucGiam + "%";
-//						break;
-//
-//					case "mua tặng":
-//						int soLuongTang = (soLuong / km.getSoLuongMua()) * km.getSoLuongTang();
-//						if (soLuongTang > 0) {
-//							moTaKM = String.format("Mua %d tặng %d (Tặng: %d)", km.getSoLuongMua(), km.getSoLuongTang(),
-//									soLuongTang);
-//						}
-//						break;
-//					}
-//				}
-//			}
-//
-//			modelThuoc.addRow(new Object[] { tenThuoc, noiSanXuat, soLuong, tenDVT, tool.dinhDangVND(donGia),
-//					tool.dinhDangVND(thanhTien), moTaKM });
+			if (maKM != null && !maKM.isEmpty()) {
+                KhuyenMai km = null;
+                try {
+                    km = kmService.layKhuyenMaiTheoMa(maKM);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                if (km != null && !homNay.isBefore(km.getNgayBD()) && !homNay.isAfter(km.getNgayKT())) {
+					switch (km.getLoaiKM().toLowerCase()) {
+					case "giảm giá":
+						mucGiam = (double) km.getMucKM();
+						moTaKM = "Giảm " + mucGiam + "%";
+						break;
+
+					case "mua tặng":
+						int soLuongTang = (soLuong / km.getSoLuongMua()) * km.getSoLuongTang();
+						if (soLuongTang > 0) {
+							moTaKM = String.format("Mua %d tặng %d (Tặng: %d)", km.getSoLuongMua(), km.getSoLuongTang(),
+									soLuongTang);
+						}
+						break;
+					}
+				}
+			}
+
+			modelThuoc.addRow(new Object[] { tenThuoc, noiSanXuat, soLuong, tenDVT, tool.dinhDangVND(donGia),
+					tool.dinhDangVND(thanhTien), moTaKM });
 		}
 
 	}
