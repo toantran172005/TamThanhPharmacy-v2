@@ -3,10 +3,13 @@ package controller;
 import entity.PhieuDatHang;
 import gui.ChiTietPhieuDatHang_GUI;
 //import gui.LapHoaDon_GUI;
+import gui.LapHoaDon_GUI;
 import gui.TimKiemPhieuDatHang_GUI;
 //import service.DonViTinhService;
+import service.DonViTinhService;
 import service.PhieuDatHangService;
 //import service.ThuocService;
+import service.ThuocService;
 import utils.ToolCtrl;
 
 import javax.swing.*;
@@ -17,8 +20,8 @@ public class ChiTietPDHController {
     public ToolCtrl tool = new ToolCtrl();
 
     public PhieuDatHangService pdhService = new PhieuDatHangService();
-//    public DonViTinhService dvtService = new DonViTinhService();
-//    public ThuocService thService = new ThuocService();
+    public DonViTinhService dvtService = new DonViTinhService();
+    public ThuocService thService = new ThuocService();
 
     public ChiTietPDHController(ChiTietPhieuDatHang_GUI ctpdhGUI) {
         super();
@@ -39,14 +42,14 @@ public class ChiTietPDHController {
             String maPDH = ctpdhGUI.getLblMaPhieuDat().getText();
 
             // Chuyển trang Lập Hóa Đơn có thể cần Load dữ liệu, nên gói vào Thread
-//            new Thread(() -> {
-//                SwingUtilities.invokeLater(() -> {
-//                    LapHoaDon_GUI lapHD = new LapHoaDon_GUI(ctpdhGUI.getMainFrameQL());
-//                    LapHoaDonController ctrl = new LapHoaDonController(lapHD);
-//                    ctrl.loadTuPhieuDatHang(maPDH);
-//                    tool.doiPanel(ctpdhGUI, lapHD);
-//                });
-//            }).start();
+            new Thread(() -> {
+                SwingUtilities.invokeLater(() -> {
+                    LapHoaDon_GUI lapHD = new LapHoaDon_GUI(ctpdhGUI.getMainFrameQL());
+                    LapHoaDonController ctrl = new LapHoaDonController(lapHD);
+                    ctrl.loadTuPhieuDatHang(maPDH);
+                    tool.doiPanel(ctpdhGUI, lapHD);
+                });
+            }).start();
         }
     }
 

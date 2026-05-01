@@ -1,6 +1,7 @@
 package controller;
 
 //import service.HoaDonService;
+import service.HoaDonService;
 import service.PhieuDoiTraService;
 //import service.ThuocService;
 import entity.HoaDon;
@@ -9,6 +10,7 @@ import gui.ChiTietPhieuDoiTra_GUI;
 import gui.TimKiemPhieuDoiTra_GUI;
 import gui.TrangChuNV_GUI;
 import gui.TrangChuQL_GUI;
+import service.ThuocService;
 import utils.ToolCtrl;
 
 import javax.swing.JFileChooser;
@@ -27,8 +29,8 @@ public class ChiTietPhieuDoiTraController {
     public ChiTietPhieuDoiTra_GUI gui;
 
     public PhieuDoiTraService phieuDTService = new PhieuDoiTraService();
-//    public HoaDonService hdService = new HoaDonService();
-//    public ThuocService thuocService = new ThuocService();
+    public HoaDonService hdService = new HoaDonService();
+    public ThuocService thuocService = new ThuocService();
 
     public ToolCtrl tool = new ToolCtrl();
     public TrangChuNV_GUI trangChuNV;
@@ -63,20 +65,20 @@ public class ChiTietPhieuDoiTraController {
 
         // Mở Thread để gọi mạng lấy các thông tin chưa có (HoaDon, Tính Tiền)
         new Thread(() -> {
-//            HoaDon hd = hdService.timHoaDonTheoMa(maHD);
+            HoaDon hd = hdService.timHoaDonTheoMa(maHD);
             double tongTienHoan = phieuDTService.tinhTongTienHoanTheoPhieuDT(maPhieuDT);
 
             // Trả kết quả về giao diện UI
             SwingUtilities.invokeLater(() -> {
-//                String diaChi = (hd != null && hd.getDiaChiHT() != null) ? hd.getDiaChiHT() : "";
-//                String hotline = (hd != null && hd.getHotline() != null) ? hd.getHotline() : "";
+                String diaChi = (hd != null && hd.getDiaChiHT() != null) ? hd.getDiaChiHT() : "";
+                String hotline = (hd != null && hd.getHotline() != null) ? hd.getHotline() : "";
 
                 gui.getLblMaPhieuDT().setText(maPhieuDT);
                 gui.getLblMaHD().setText(maHD);
                 gui.getLblKhachHang().setText(tenKH);
                 gui.getLblNhanVien().setText(tenNV);
-//                gui.getLblDiaChi().setText(diaChi);
-//                gui.getLblHotline().setText(tool.chuyenSoDienThoai(hotline));
+                gui.getLblDiaChi().setText(diaChi);
+                gui.getLblHotline().setText(tool.chuyenSoDienThoai(hotline));
                 gui.getLblLyDo().setText(lyDo);
 
                 if (ngayDoiTra != null) {
@@ -101,11 +103,11 @@ public class ChiTietPhieuDoiTraController {
 
             for (Object[] row : listCT) {
                 double tienHoan = row[7] instanceof Number ? ((Number) row[7]).doubleValue() : 0;
-//                String noiSanXuat = thuocService.timTenQGTheoMaThuoc(row[1].toString());
+                String noiSanXuat = thuocService.timTenQGTheoMaThuoc(row[1].toString());
 
                 tableRows.add(new Object[] {
                         row[2], // tên thuốc
-//                        noiSanXuat,
+                        noiSanXuat,
                         row[3], // số lượng
                         row[5], // đơn vị
                         row[6], // mức hoàn

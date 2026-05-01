@@ -26,7 +26,7 @@ public class LapPhieuDatHang_GUI extends JPanel {
 	Font font1 = new Font("Time New Roman", Font.BOLD, 18);
 	Font font2 = new Font("Time New Roman", Font.PLAIN, 15);
 	public ToolCtrl tool = new ToolCtrl();
-	public LapPhieuDatHangController lpdhCtrl = new LapPhieuDatHangController(this);
+	public LapPhieuDatHangController lpdhCtrl;
 	public DefaultTableModel model;
 	public TrangChuQL_GUI trangChuQL;
 	public TrangChuNV_GUI trangChuNV;
@@ -38,23 +38,21 @@ public class LapPhieuDatHang_GUI extends JPanel {
 	
 	public void setHoatDong() {
 		btnLamMoi.addActionListener(e -> lpdhCtrl.lamMoi());
-//		btnThem.addActionListener(e -> lpdhCtrl.themVaoTable());
+		btnThem.addActionListener(e -> lpdhCtrl.themVaoTable());
 		btnXoa.addActionListener(e -> lpdhCtrl.xoaThuoc());
-//		btnTaoPhieuDat.addActionListener(e -> lpdhCtrl.taoPhieuDat());
+		btnTaoPhieuDat.addActionListener(e -> lpdhCtrl.taoPhieuDat());
 	}
 	
 	public LapPhieuDatHang_GUI(TrangChuQL_GUI trangChuQL) {
 	    this.trangChuQL = trangChuQL;
 	    initUI();
-	    setUpDuLieu();
-	    setHoatDong();
+		lpdhCtrl = new LapPhieuDatHangController(this);
 	}
 	
 	public LapPhieuDatHang_GUI(TrangChuNV_GUI trangChuNV) {
 	    this.trangChuNV = trangChuNV;
 	    initUI();
-	    setUpDuLieu();
-	    setHoatDong();
+		lpdhCtrl = new LapPhieuDatHangController(this);
 	}
 
 	public void initUI() {
